@@ -21,10 +21,6 @@ mount -o bind /mnt/SDCARD/miyoo/lib /usr/miyoo/lib
 mount -o bind /mnt/SDCARD/miyoo/res /usr/miyoo/res
 mount -o bind "/mnt/SDCARD/.tmp_update/etc/profile" /etc/profile
 
-# Stop NTPD
-/etc/init.d/sysntpd stop
-/etc/init.d/ntpd stop
-
 # Load helper functions and helpers
 . /mnt/SDCARD/spruce/scripts/helperFunctions.sh
 #. /mnt/SDCARS/spruce/scripts/runtimeHelper.sh

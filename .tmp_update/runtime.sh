@@ -121,9 +121,9 @@ swapon -p 40 "${SWAPFILE}"
 log_message "Swap file activated"
 
 # Run scripts for initial setup
+${NEW_SCRIPTS_DIR}/emufresh_md5_multi.sh
 ${NEW_SCRIPTS_DIR}/forcedisplay.sh
 ${NEW_SCRIPTS_DIR}/low_power_warning.sh
-${NEW_SCRIPTS_DIR}/ffplay_is_now_media.sh
 ${NEW_SCRIPTS_DIR}/checkfaves.sh &
 ${NEW_SCRIPTS_DIR}/credits_watchdog.sh &
 log_message "Initial setup scripts executed"

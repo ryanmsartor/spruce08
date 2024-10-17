@@ -1,31 +1,16 @@
 $CHECK=/mnt/SDCARD/spruce/scripts/applySetting/checkFlag.sh$
 $FLAGS=/mnt/SDCARD/spruce/flags$
 $LCD=/mnt/SDCARD/spruce/scripts/applySetting/LEDon.sh$
-$RECENTS=/mnt/SDCARD/spruce/scripts/applySetting/recentsTile.sh$
-$SAMBA=/mnt/SDCARD/spruce/scripts/applySetting/SAMBA.sh$
 $SETTINGS=/mnt/SDCARD/spruce/settings$
-$SFTPGO=/mnt/SDCARD/spruce/scripts/applySetting/sftpgo.sh$
 $SHOW_HIDE=/mnt/SDCARD/spruce/scripts/applySetting/showHideApp.sh$
-$SSH=/mnt/SDCARD/spruce/scripts/applySetting/SSH.sh$
 [System]
 "" "Powerdown on main menu idle" "0|2|5|10" "Off|2 min|5 min |10 min" "Off" "" ""
 @"NOT IMPLEMENTED YET"
 "" "Blue LED mode" "||" "Always on|On in menu only|Always off" "$LCD$ check" "$LCD$ on|$LCD$ menu|$LCD$ off" ""
 "" "Show battery percentage" "|" "on|off" "$CHECK$ show_battery_percent" "touch $FLAGS$/show_battery_percent|rm -f $FLAGS$/show_battery_percent" ""
 @"Only on supported themes"
-"-e" "Enable Recents in main menu" "|" "on|off" "$CHECK$ recentsTile" "$RECENTS$|$RECENTS$" ""
 "-f" "Enable RetroArch expert mode" "|" "on|off" "off" "" ""
 @"NOT IMPLEMENTED YET"
-[Network]
-"" "Sync Time/RTC with network" "|" "on|off" "$CHECK$ enableNetworkTimeSync" "touch $FLAGS$/enableNetworkTimeSync|rm -f $FLAGS$/enableNetworkTimeSync" ""
-"" "Enable WiFi File Transfer" "|" "on|off" "$SFTPGO$ check" "$SFTPGO$ on|$SFTPGO$ off" "$SFTPGO$"
-@"Manage your files wirelessly"
-"" "Enable SSH" "|" "on|off" "$CHECK$ dropbear" "$SSH$ on|$SSH$ off" "$SSH$"
-@"User: root, Password: tina"
-"" "Enable Samba" "|" "on|off" "$CHECK$ samba" "$SAMBA$ on|$SAMBA$ off" "$SAMBA$"
-@"User: root, Password: tina"
-"" "Enable Syncthing" "|" "on|off" "off" "" ""
-@"NOT IMPLEMENTED YET Synchronize files."
 [Game Switcher] [/mnt/SDCARD/spruce/flags/gs_options]
 "" "Run on start" "|" "on|off" "$CHECK$ gs.boot" "touch $FLAGS$/gs.boot|rm -f $FLAGS$/gs.boot" ""
 @"Boot into Game Switcher"
@@ -44,18 +29,8 @@ $SSH=/mnt/SDCARD/spruce/scripts/applySetting/SSH.sh$
 [Visible Apps]
 "" "Boot Logo App" "|" "on|off" "$SHOW_HIDE$ check /mnt/SDCARD/App/BootLogo/config.json" "$SHOW_HIDE$ show /mnt/SDCARD/App/BootLogo/config.json|$SHOW_HIDE$ hide /mnt/SDCARD/App/BootLogo/config.json" ""
 @"Change the boot logo"
-"" "Boxart Scraper" "|" "on|off" "$SHOW_HIDE$ check /mnt/SDCARD/App/BoxartScraper/config.json" "$SHOW_HIDE$ show /mnt/SDCARD/App/BoxartScraper/config.json|$SHOW_HIDE$ hide /mnt/SDCARD/App/BoxartScraper/config.json" ""
-@"Download boxart for your games"
 "" "File Management" "|" "on|off" "$SHOW_HIDE$ check /mnt/SDCARD/App/FileManagement/config.json" "$SHOW_HIDE$ show /mnt/SDCARD/App/FileManagement/config.json|$SHOW_HIDE$ hide /mnt/SDCARD/App/FileManagement/config.json" ""
 "" "Miyoo GameList Generator" "|" "on|off" "$SHOW_HIDE$ check /mnt/SDCARD/App/MiyooGamelist/config.json" "$SHOW_HIDE$ show /mnt/SDCARD/App/MiyooGamelist/config.json|$SHOW_HIDE$ hide /mnt/SDCARD/App/MiyooGamelist/config.json" ""
 @"Generate GameList files for alternate/full rom names"
 "" "Random Game Launcher" "|" "on|off" "$SHOW_HIDE$ check /mnt/SDCARD/App/RandomGame/config.json" "$SHOW_HIDE$ show /mnt/SDCARD/App/RandomGame/config.json|$SHOW_HIDE$ hide /mnt/SDCARD/App/RandomGame/config.json" ""
 @"Launch random games from your roms folder"
-"" "Real Time Clock" "|" "on|off" "$SHOW_HIDE$ check /mnt/SDCARD/App/RealTimeClock/config.json" "$SHOW_HIDE$ show /mnt/SDCARD/App/RealTimeClock/config.json|$SHOW_HIDE$ hide /mnt/SDCARD/App/RealTimeClock/config.json" ""
-@"Set the RTC to the current date and time"
-"" "Spruce Restore" "|" "on|off" "$SHOW_HIDE$ check /mnt/SDCARD/App/spruceRestore/config.json" "$SHOW_HIDE$ show /mnt/SDCARD/App/spruceRestore/config.json|$SHOW_HIDE$ hide /mnt/SDCARD/App/spruceRestore/config.json" ""
-@"Restore spruce from a backup file"
-"" "Syncthing" "|" "on|off" "$SHOW_HIDE$ check /mnt/SDCARD/App/Syncthing/config.json" "$SHOW_HIDE$ show /mnt/SDCARD/App/Syncthing/config.json|$SHOW_HIDE$ hide /mnt/SDCARD/App/Syncthing/config.json" ""
-@"Synchronize your files via Syncthing"
-"" "Wifi File Transfer" "|" "on|off" "$SHOW_HIDE$ check /mnt/SDCARD/App/WifiFileTransfer/config.json" "$SHOW_HIDE$ show /mnt/SDCARD/App/WifiFileTransfer/config.json|$SHOW_HIDE$ hide /mnt/SDCARD/App/WifiFileTransfer/config.json" ""
-@"Transfer files to your device via WiFi through your browser"

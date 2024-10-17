@@ -9,36 +9,35 @@ SDCARD_PATH="/mnt/SDCARD"
 BG_IMAGE="/mnt/SDCARD/spruce/imgs/displayTextPreColor.png"
 SPRUCE_LOGO="/mnt/SDCARD/spruce/imgs/spruce_logo.png"
 FW_ICON="/mnt/SDCARD/Themes/SPRUCE/icons/App/firmwareupdate.png"
-ICONFRESH_ICON="/mnt/SDCARD/Themes/SPRUCE/App/iconfresh.png"
-WIKI_ICON="/mnt/SDCARD/spruce/imgs/book.png"
 HAPPY_ICON="/mnt/SDCARD/spruce/imgs/smile.png"
 
 if flag_check "first_boot"; then
-    display -i "$BG_IMAGE" --icon "$SPRUCE_LOGO" -t "Installing spruce08 v0.1.0!
-     " -p bottom
     log_message "First boot flag detected. Running first boot procedure"
-    
-    cp "${SDCARD_PATH}/.tmp_update/system.json" "$SETTINGS_FILE" && sync
+    {
+        cp "${SDCARD_PATH}/.tmp_update/system.json" "$SETTINGS_FILE" && sync
 
-    if [ -f "${SWAPFILE}" ]; then
-        SWAPSIZE=$(du -k "${SWAPFILE}" | cut -f1)
-        MINSIZE=$((128 * 1024))
-        if [ "$SWAPSIZE" -lt "$MINSIZE" ]; then
-            swapoff "${SWAPFILE}"
-            rm "${SWAPFILE}"
-            log_message "Removed undersized swap file" -v
+        if [ -f "${SWAPFILE}" ]; then
+            SWAPSIZE=$(du -k "${SWAPFILE}" | cut -f1)
+            MINSIZE=$((128 * 1024))
+            if [ "$SWAPSIZE" -lt "$MINSIZE" ]; then
+                swapoff "${SWAPFILE}"
+                rm "${SWAPFILE}"
+                log_message "Removed undersized swap file" -v
+            fi
         fi
-    fi
-    
-    if [ ! -f "${SWAPFILE}" ]; then
-        dd if=/dev/zero of="${SWAPFILE}" bs=1M count=128
-        mkswap "${SWAPFILE}"
-        sync
-        log_message "Created new swap file" -v
-    fi
-    
-    /mnt/SDCARD/spruce/scripts/emufresh_md5_multi.sh
-    /mnt/SDCARD/spruce/scripts/iconfresh.sh --silent
+        if [ ! -f "${SWAPFILE}" ]; then
+            dd if=/dev/zero of="${SWAPFILE}" bs=1M count=128
+            mkswap "${SWAPFILE}"
+            sync
+            log_message "Created new swap file" -v
+        fi
+        
+        /mnt/SDCARD/spruce/scripts/emufresh_md5_multi.sh
+        /mnt/SDCARD/spruce/scripts/iconfresh.sh --silent
+    } &
+
+    display -d 3 -i "$BG_IMAGE" --icon "$SPRUCE_LOGO" -t "Installing spruce08 v0.1.0!
+     " -p bottom
 
     VERSION=$(cat /usr/miyoo/version)
     if [ "$VERSION" -lt 20240713100458 ]; then
@@ -48,7 +47,7 @@ if flag_check "first_boot"; then
     fi
     
     log_message "Displaying enjoy image"
-    display -d 5 -i "$BG_IMAGE" --icon "$HAPPY_ICON" -p bottom -t "Happy gaming..........!
+    display -d 3 -i "$BG_IMAGE" --icon "$HAPPY_ICON" -p bottom -t "Happy gaming..........!
      "
 
     flag_remove "first_boot"

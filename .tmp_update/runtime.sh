@@ -54,8 +54,6 @@ kill_images
 # Bring up network services
 nice -n -20 /mnt/SDCARD/.tmp_update/scripts/networkservices.sh &
 
-${NEW_SCRIPTS_DIR}/spruceRestoreShow.sh &
-
 # Check for first_boot flag and run ThemeUnpacker accordingly
 if flag_check "first_boot"; then
     ${NEW_SCRIPTS_DIR}/ThemeUnpacker.sh --silent &

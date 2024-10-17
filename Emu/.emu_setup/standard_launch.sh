@@ -11,31 +11,15 @@ export EMU_NAME="$(echo "$1" | cut -d'/' -f5)"
 export GAME="$(basename "$1")"
 export EMU_DIR="/mnt/SDCARD/Emu/${EMU_NAME}"
 export DEF_DIR="/mnt/SDCARD/Emu/.emu_setup/defaults"
-export OPT_DIR="/mnt/SDCARD/Emu/.emu_setup/options"
 export DEF_FILE="$DEF_DIR/${EMU_NAME}.opt"
-export OPT_FILE="$OPT_DIR/${EMU_NAME}.opt"
 
-##### IMPORT .OPT FILES #####
-
-if [ -f "$DEF_FILE" ]; then
-	. "$DEF_FILE"
-else
-	log_message "WARNING: Default .opt file not found for $EMU_NAME!" -v
-fi
-
-if [ -f "$OPT_FILE" ]; then
-	. "$OPT_FILE"
-else
-	log_message "WARNING: System .opt file not found for $EMU_NAME!" -v
-fi
+. "$DEF_FILE"
 
 ##### SET CPU MODE #####
 
 if [ "$MODE" = "overclock" ]; then
 	set_overclock
-fi
-
-if [ "$MODE" != "overclock" ] && [ "$MODE" != "performance" ]; then
+elif [ "$MODE" != "performance" ]; then
 	/mnt/SDCARD/spruce/scripts/enforceSmartCPU.sh &
 fi
 
@@ -73,11 +57,7 @@ case $EMU_NAME in
 		;;
 
 	*)
-		if flag_check "expertRA"; then
-			export RA_BIN="retroarch"
-		else
-			export RA_BIN="ra32.miyoo"
-		fi
+		RA_BIN="ra32.miyoo"
 		RA_DIR="/mnt/SDCARD/RetroArch"
 		cd "$RA_DIR"
 

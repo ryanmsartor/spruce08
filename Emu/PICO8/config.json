@@ -18,10 +18,6 @@
     {
       "name": "Import carts from Splore to MainUI",
       "launch": "import.sh"
-    },
-    {
-      "name": "CPU Mode: (✓SMART)-Performance-Overclock",
-      "launch": "/mnt/SDCARD/Emu/.emu_setup/speed/Performance.sh"
     }
   ]
 }

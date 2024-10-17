@@ -12,10 +12,8 @@ export GAME="$(basename "$1")"
 export EMU_DIR="/mnt/SDCARD/Emu/${EMU_NAME}"
 export DEF_DIR="/mnt/SDCARD/Emu/.emu_setup/defaults"
 export OPT_DIR="/mnt/SDCARD/Emu/.emu_setup/options"
-export OVR_DIR="/mnt/SDCARD/Emu/.emu_setup/overrides"
 export DEF_FILE="$DEF_DIR/${EMU_NAME}.opt"
 export OPT_FILE="$OPT_DIR/${EMU_NAME}.opt"
-export OVR_FILE="$OVR_DIR/$EMU_NAME/$GAME.opt"
 
 ##### IMPORT .OPT FILES #####
 
@@ -29,13 +27,6 @@ if [ -f "$OPT_FILE" ]; then
 	. "$OPT_FILE"
 else
 	log_message "WARNING: System .opt file not found for $EMU_NAME!" -v
-fi
-
-if [ -f "$OVR_FILE" ]; then
-	. "$OVR_FILE";
-	log_message "Launch setting OVR_FILE detected @ $OVR_FILE" -v
-else
-	log_message "No launch OVR_FILE detected. Using current system settings." -v
 fi
 
 ##### SET CPU MODE #####

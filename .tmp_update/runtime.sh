@@ -35,9 +35,7 @@ flag_remove "themeChanged"
 flag_remove "log_verbose"
 flag_remove "low_battery"
 
-log_message " "
 log_message "---------Starting up---------"
-log_message " "
 
 # Check if WiFi is enabled
 wifi=$(grep '"wifi"' /config/system.json | awk -F ':' '{print $2}' | tr -d ' ,')
@@ -126,7 +124,14 @@ kill_images
 # Initialize CPU settings
 set_smart
 
-/mnt/SDCARD/Emu/.emu_setup/standard_launch.sh "cart.splore"
+# create splore launcher if it doesn't already exist
+SPLORE_CART="/mnt/SDCARD/Roms/PICO8/-=☆ Launch Splore ☆=-.splore"
+if [ ! -f "$SPLORE_CART" ]; then
+	touch "$SPLORE_CART" && log_message "created $SPLORE_CART"
+fi
+
+# launch splore!
+/mnt/SDCARD/Emu/.emu_setup/standard_launch.sh "$SPLORE_CART"
 
 # start main loop
 log_message "Starting main loop"

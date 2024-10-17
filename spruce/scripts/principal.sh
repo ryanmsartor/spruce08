@@ -60,6 +60,9 @@ while [ 1 ]; do
         display_kill
         kill_images
 
+        # check if emu visibility needs a refresh, before entering MainUI
+        /mnt/SDCARD/spruce/scripts/emufresh_md5_multi.sh
+
         ./MainUI &> /dev/null
         # remove in menu flag
         flag_remove "in_menu"
@@ -69,13 +72,14 @@ while [ 1 ]; do
         /root/gameloader
 
     elif [ -f /tmp/cmd_to_run.sh ]; then
+        set_performance &
         chmod a+x /tmp/cmd_to_run.sh
         cat /tmp/cmd_to_run.sh > "$FLAGS_DIR/lastgame.lock"
         /tmp/cmd_to_run.sh &>/dev/null
         rm /tmp/cmd_to_run.sh
 
         # reset CPU settings to defaults in case an emulator changes anything
-        set_smart
+        set_smart &
 
         #/mnt/SDCARD/spruce/scripts/select.sh &>/dev/null
     fi

@@ -40,19 +40,9 @@ fi
 
 ##### SET CPU MODE #####
 
-case $EMU_NAME in
-	"NDS")
-		if [ "$MODE" = "overclock" ]; then
-			{sleep 33 && set_overclock} &
-		fi
-		;;
-
-	*)
-		if [ "$MODE" = "overclock" ]; then
-			set_overclock
-		fi
-		;;
-esac
+if [ "$MODE" = "overclock" ]; then
+	set_overclock
+fi
 
 if [ "$MODE" != "overclock" ] && [ "$MODE" != "performance" ]; then
 	/mnt/SDCARD/spruce/scripts/enforceSmartCPU.sh &
@@ -69,39 +59,6 @@ case $EMU_NAME in
 		ffplay -vf transpose=2 -fs -i "$1"
 		;;
 
-	"NDS")
-		cd $EMU_DIR
-		if [ ! -f "/tmp/.show_hotkeys" ]; then
-			touch /tmp/.show_hotkeys
-			LD_LIBRARY_PATH=libs2:/usr/miyoo/lib ./show_hotkeys
-		fi
-		export HOME=$EMU_DIR
-		export LD_LIBRARY_PATH=libs:/usr/miyoo/lib:/usr/lib
-		export SDL_VIDEODRIVER=mmiyoo
-		export SDL_AUDIODRIVER=mmiyoo
-		export EGL_VIDEODRIVER=mmiyoo
-		cd $EMU_DIR
-		if [ -f 'libs/libEGL.so' ]; then
-			rm -rf libs/libEGL.so
-			rm -rf libs/libGLESv1_CM.so
-			rm -rf libs/libGLESv2.so
-		fi
-		./drastic "$1"
-		sync
-		;;
-
-	"OPENBOR")
-		export LD_LIBRARY_PATH=lib:/usr/miyoo/lib:/usr/lib
-		export HOME=$EMU_DIR
-		cd $HOME
-		if [ "$GAME" == "Final Fight LNS.pak" ]; then
-			./OpenBOR_mod "$1"
-		else
-			./OpenBOR_new "$1"
-		fi
-		sync
-		;;
-	
 	"PICO8")
 		export HOME="$EMU_DIR"
 		export PATH="$HOME"/bin:$PATH
@@ -124,25 +81,6 @@ case $EMU_NAME in
 		/bin/sh "$1"
 		;;
 
-	"PSP")
-		if [ "$CORE" = "standalone" ]; then
-			cd $EMU_DIR
-			export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$EMU_DIR
-			export HOME=/mnt/SDCARD
-			
-			./PPSSPPSDL "$*"
-		else
-			if flag_check "expertRA"; then
-				export RA_BIN="retroarch"
-			else
-				export RA_BIN="ra32.miyoo"
-			fi
-			RA_DIR="/mnt/SDCARD/RetroArch"
-			cd "$RA_DIR"
-			HOME="$RA_DIR/" "$RA_DIR/$RA_BIN" -v -L "$RA_DIR/.retroarch/cores/${CORE}_libretro.so" "$1"
-		fi
-		;;
-	
 	*)
 		if flag_check "expertRA"; then
 			export RA_BIN="retroarch"

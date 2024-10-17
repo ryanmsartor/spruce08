@@ -126,6 +126,8 @@ kill_images
 # Initialize CPU settings
 set_smart
 
+/mnt/SDCARD/Emu/.emu_setup/standard_launch.sh "cart.splore"
+
 # start main loop
 log_message "Starting main loop"
 ${NEW_SCRIPTS_DIR}/principal.sh

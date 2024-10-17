@@ -14,8 +14,6 @@ killall -9 principal.sh
 killall -9 MainUI
 
 flag_remove "in_menu"
-flag_add "save_active"
-log_message "Created save_active flag"
 
 show_image "/mnt/SDCARD/.tmp_update/res/save.png" 3
 

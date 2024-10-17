@@ -26,8 +26,6 @@ runifnecessary() {
     fi
 }
 
-flag_remove "save_active"
-
 if [ -f /mnt/SDCARD/spruce/flags/gs.boot ] || \
    [ -f /mnt/SDCARD/spruce/flags/gs.lock ] ; then
     log_message "***** GAME SWITCHER: flag file detected! Launching! *****"

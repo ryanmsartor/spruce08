@@ -19,7 +19,7 @@ EMULATOR_BASE_PATH="/mnt/SDCARD/Emu/"
 APP_BASE_PATH="/mnt/SDCARD/app/"
 THEME_JSON_FILE="/config/system.json"
 SKIN_PATH="/mnt/SDCARD/miyoo/res/skin"
-DEFAULT_SKIN_PATH="/mnt/SDCARD/Icons/Default/skin"
+DEFAULT_SKIN_PATH="/mnt/SDCARD/Themes/SPRUCE/skin"
 
 if [ ! -f "$THEME_JSON_FILE" ]; then
     exit 1
@@ -34,7 +34,7 @@ fi
 
 DEFAULT_ICON_PATH="/mnt/SDCARD/icons/default/"
 DEFAULT_ICON_SEL_PATH="${DEFAULT_ICON_PATH}sel/"
-APP_DEFAULT_ICON_PATH="/mnt/SDCARD/Icons/Default/App/"
+APP_DEFAULT_ICON_PATH="/mnt/SDCARD/Themes/SPRUCE/icons/App/"
 APP_THEME_ICON_PATH="${THEME_PATH}Icons/App/"
 
 update_emulator_icons() {

@@ -34,7 +34,7 @@ if flag_check "first_boot"; then
         /mnt/SDCARD/spruce/scripts/iconfresh.sh --silent
     } &
 
-    display -d 3 -i "$BG_IMAGE" --icon "$SPRUCE_LOGO" -t "Installing spruce08 v0.1.0!
+    display -d 3 -i "$SPRUCE_LOGO" -t "Installing spruce08 v0.1.0!
      
      " -p bottom
 
@@ -44,7 +44,7 @@ if flag_check "first_boot"; then
         display -i "$BG_IMAGE" --icon "$FW_ICON" -d 5 -p bottom -t "Visit the App section from the main menu to update your firmware to the latest version. It fixes the A30's Wi-Fi issues!"
     fi
     
-    display -d 5 --icon "$HAPPY_ICON" -t "Happy gaming..........!
+    display -d 3 --icon "$HAPPY_ICON" -t "Happy gaming..........!
      
      " -p bottom
 

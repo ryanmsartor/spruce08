@@ -14,9 +14,9 @@ if flag_check "first_boot"; then
     log_message "First boot flag detected. Running first boot procedure"
     cp "${SDCARD_PATH}/.tmp_update/system.json" "$SETTINGS_FILE" && sync
 
-if [ -f "/mnt/SDCARD/App/Bootlogo/bootlogo.bmp"; then ]
-    /mnt/SDCARD/App/Bootlogo/launch.sh
-    rm "/mnt/SDCARD/App/Bootlogo/bootlogo.bmp"
+if [ -f "/mnt/SDCARD/App/BootLogo/bootlogo.bmp"; then ]
+    /mnt/SDCARD/App/BootLogo/launch.sh
+    rm "/mnt/SDCARD/App/BootLogo/bootlogo.bmp"
 fi
 
     {

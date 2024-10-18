@@ -100,7 +100,6 @@ log_message "Swap file activated"
 # ${NEW_SCRIPTS_DIR}/forcedisplay.sh
 ${NEW_SCRIPTS_DIR}/low_power_warning.sh
 # ${NEW_SCRIPTS_DIR}/checkfaves.sh &
-${NEW_SCRIPTS_DIR}/credits_watchdog.sh &
 ${NEW_SCRIPTS_DIR}/applySetting/idlemon_mm.sh
 log_message "Initial setup scripts executed"
 kill_images

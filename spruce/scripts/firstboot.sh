@@ -13,6 +13,12 @@ HAPPY_ICON="/mnt/SDCARD/spruce/imgs/smile.png"
 if flag_check "first_boot"; then
     log_message "First boot flag detected. Running first boot procedure"
     cp "${SDCARD_PATH}/.tmp_update/system.json" "$SETTINGS_FILE" && sync
+
+if [ -f "/mnt/SDCARD/App/Bootlogo/bootlogo.bmp"; then ]
+    /mnt/SDCARD/App/Bootlogo/launch.sh
+    rm "/mnt/SDCARD/App/Bootlogo/bootlogo.bmp"
+fi
+
     {
         if [ -f "${SWAPFILE}" ]; then
             SWAPSIZE=$(du -k "${SWAPFILE}" | cut -f1)

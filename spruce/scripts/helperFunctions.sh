@@ -182,7 +182,7 @@ display() {
     
     # Add icon image if specified
     if [ -n "$icon_image" ]; then
-        command="$command \"$icon_image\" 0.30 middle center"
+        command="$command \"$icon_image\" 0.20 middle center"
     fi
     
     # Execute the command in the background if delay is 0
@@ -473,7 +473,6 @@ set_smart() {
 	echo 3 > /sys/devices/system/cpu/cpufreq/conservative/freq_step
 	echo 1 > /sys/devices/system/cpu/cpufreq/conservative/sampling_down_factor
 	echo 400000 > /sys/devices/system/cpu/cpufreq/conservative/sampling_rate
-	echo 200000 > /sys/devices/system/cpu/cpufreq/conservative/sampling_rate_min
 	echo "$scaling_min_freq" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq
 	log_message "CPU Mode set to SMART"
 }

@@ -26,13 +26,16 @@ runifnecessary() {
     fi
 }
 
-if [ -f /mnt/SDCARD/spruce/flags/gs.boot ] || \
-   [ -f /mnt/SDCARD/spruce/flags/gs.lock ] ; then
-    log_message "***** GAME SWITCHER: flag file detected! Launching! *****"
-    /mnt/SDCARD/.tmp_update/scripts/gameswitcher.sh
+if [ -f /mnt/SDCARD/spruce/flags/gs.boot ] ; then
+    touch /mnt/SDCARD/spruce/flags/gs.lock
 fi
 
 while [ 1 ]; do
+
+    if [ -f /mnt/SDCARD/spruce/flags/gs.lock ] ; then
+        log_message "***** GAME SWITCHER: flag file detected! Launching! *****" -v
+        /mnt/SDCARD/.tmp_update/scripts/gameswitcher.sh
+    fi
 
     if [ ! -f /tmp/cmd_to_run.sh ] ; then
         # create in menu flag
@@ -79,13 +82,12 @@ while [ 1 ]; do
         # reset CPU settings to defaults in case an emulator changes anything
         set_smart &
 
-        #/mnt/SDCARD/spruce/scripts/select.sh &>/dev/null
     fi
 
-    if [ -f /mnt/SDCARD/spruce/flags/gs.lock ] || \
-       [ -f /mnt/SDCARD/spruce/flags/gs.fix ] ; then
-        log_message "***** GAME SWITCHER: flag file detected! Launching! *****"
-        /mnt/SDCARD/.tmp_update/scripts/gameswitcher.sh
+    # set gs.lock flag if last loaded program is real game and gs.fix flag is set
+    if [ -f /mnt/SDCARD/spruce/flags/gs.fix ] && \
+        grep -q '/mnt/SDCARD/Emu' "$FLAGS_DIR/lastgame.lock" ; then
+        touch /mnt/SDCARD/spruce/flags/gs.lock
     fi
 
     if [ -f /mnt/SDCARD/spruce/flags/credits.lock ] ; then

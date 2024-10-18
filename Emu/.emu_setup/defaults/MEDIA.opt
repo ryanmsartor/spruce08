@@ -1,6 +1,5 @@
 #!/bin/sh
 
 export MODE="smart"
-export down_threshold=30
 
-export scaling_min_freq=816000
+export scaling_min_freq=480000

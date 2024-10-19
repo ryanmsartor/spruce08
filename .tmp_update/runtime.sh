@@ -35,6 +35,9 @@ flag_remove "in_menu"
 
 log_message "---------Starting up---------"
 
+# Generate wpa_supplicant.conf from wifi.cfg
+${NEW_SCRIPTS_DIR}/supplicant.sh
+
 # Check if WiFi is enabled
 wifi=$(grep '"wifi"' /config/system.json | awk -F ':' '{print $2}' | tr -d ' ,')
 if [ "$wifi" -eq 0 ]; then

@@ -45,7 +45,7 @@ killall -9 main
 kill_images
 
 # Bring up network services
-nice -n -20 /mnt/SDCARD/.tmp_update/scripts/networkservices.sh &
+nice -n -20 /mnt/SDCARD/spruce/scripts/networkservices.sh &
 
 # Check for first_boot flag and run ThemeUnpacker accordingly
 if flag_check "first_boot"; then
@@ -76,7 +76,7 @@ sleep 0.3
 ( ./joystickinput /dev/ttyS2 /config/joypad.config | ./sendevent /dev/input/event4 ) &
         
 # run game switcher watchdog before auto load game is loaded
-/mnt/SDCARD/.tmp_update/scripts/gameswitcher_watchdog.sh &
+/mnt/SDCARD/spruce/scripts/gameswitcher_watchdog.sh &
 
 # unhide -FirmwareUpdate- App only if necessary
 VERSION="$(cat /usr/miyoo/version)"

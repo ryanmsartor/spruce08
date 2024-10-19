@@ -34,7 +34,7 @@ while [ 1 ]; do
 
     if [ -f /mnt/SDCARD/spruce/flags/gs.lock ] ; then
         log_message "***** GAME SWITCHER: flag file detected! Launching! *****" -v
-        /mnt/SDCARD/.tmp_update/scripts/gameswitcher.sh
+        /mnt/SDCARD/spruce/scripts/gameswitcher.sh
     fi
 
     if flag_check "splore"; then

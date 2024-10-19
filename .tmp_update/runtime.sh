@@ -122,8 +122,9 @@ if [ -f "/mnt/SDCARD/pico8_dyn" ] && [ ! -f "/mnt/SDCARD/Emu/PICO8/bin/pico8_dyn
     cp "/mnt/SDCARD/pico8_dyn" "/mnt/SDCARD/Emu/PICO8/bin/pico8_dyn"
 fi
 
+
 # tell principal.sh to run splore
-echo "/mnt/SDCARD/Emu/PICO8/launch.sh $SPLORE_CART" > "/tmp/cmd_to_run.sh"
+echo "/mnt/SDCARD/Emu/PICO8/launch.sh \"$SPLORE_CART\"" > "/tmp/cmd_to_run.sh"
 
 # start main loop
 log_message "Starting main loop"

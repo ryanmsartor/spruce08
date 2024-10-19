@@ -24,6 +24,9 @@ mount -o bind "/mnt/SDCARD/.tmp_update/etc/profile" /etc/profile
 # Load helper functions and helpers
 . /mnt/SDCARD/spruce/scripts/helperFunctions.sh
 
+SPLASH="/mnt/SDCARD/spruce/imgs/spruce08.bmp"
+display -i "$SPLASH"
+
 # Flag cleanup
 flag_remove "themeChanged"
 flag_remove "log_verbose"
@@ -42,7 +45,6 @@ else
     log_message "WiFi turned on"
 fi
 killall -9 main
-kill_images
 
 # Bring up network services
 nice -n -20 /mnt/SDCARD/spruce/scripts/networkservices.sh &
@@ -75,7 +77,7 @@ sleep 0.3
 # then send to /dev/input/event4
 ( ./joystickinput /dev/ttyS2 /config/joypad.config | ./sendevent /dev/input/event4 ) &
         
-# run game switcher watchdog before auto load game is loaded
+# run game switcher watchdog
 /mnt/SDCARD/spruce/scripts/gameswitcher_watchdog.sh &
 
 # unhide -FirmwareUpdate- App only if necessary
@@ -86,7 +88,6 @@ if [ "$VERSION" -lt 20240713100458 ]; then
 fi
 
 # "${NEW_SCRIPTS_DIR}/autoIconRefresh.sh" &
-
 
 lcd_init 1
 
@@ -117,13 +118,12 @@ fi
 if [ -f "/mnt/SDCARD/pico8.dat" ] && [ ! -f "/mnt/SDCARD/Emu/PICO8/bin/pico8.dat" ]; then
     cp "/mnt/SDCARD/pico8.dat" "/mnt/SDCARD/Emu/PICO8/bin/pico8.dat"
 fi
-
 if [ -f "/mnt/SDCARD/pico8_dyn" ] && [ ! -f "/mnt/SDCARD/Emu/PICO8/bin/pico8_dyn" ]; then
     cp "/mnt/SDCARD/pico8_dyn" "/mnt/SDCARD/Emu/PICO8/bin/pico8_dyn"
 fi
 
-
-flag_add "splore"
+# tell principal.sh to run splore
+echo "/mnt/SDCARD/Emu/PICO8/launch.sh $SPLORE_CART" > "/tmp/cmd_to_run.sh"
 
 # start main loop
 log_message "Starting main loop"

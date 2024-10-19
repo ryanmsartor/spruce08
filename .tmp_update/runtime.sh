@@ -113,6 +113,15 @@ if [ ! -f "$SPLORE_CART" ]; then
 	touch "$SPLORE_CART" && log_message "created $SPLORE_CART"
 fi
 
+# copy dat and dyn into place if they are at the root of your SD card
+if [ -f "/mnt/SDCARD/pico8.dat" ] && [ ! -f "/mnt/SDCARD/Emu/PICO8/bin/pico8.dat" ]; then
+    cp "/mnt/SDCARD/pico8.dat" "/mnt/SDCARD/Emu/PICO8/bin/pico8.dat"
+fi
+
+if [ -f "/mnt/SDCARD/pico8_dyn" ] && [ ! -f "/mnt/SDCARD/Emu/PICO8/bin/pico8_dyn" ]; then
+    cp "/mnt/SDCARD/pico8_dyn" "/mnt/SDCARD/Emu/PICO8/bin/pico8_dyn"
+fi
+
 
 flag_add "splore"
 

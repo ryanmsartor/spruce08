@@ -37,6 +37,12 @@ while [ 1 ]; do
         /mnt/SDCARD/.tmp_update/scripts/gameswitcher.sh
     fi
 
+    if flag_check "splore"; then
+        SPLORE_CART="/mnt/SDCARD/Roms/PICO8/-=☆ Launch Splore ☆=-.splore"
+        /mnt/SDCARD/Emu/PICO8/launch.sh "$SPLORE_CART"
+        flag_remove "splore"
+    fi
+
     if [ ! -f /tmp/cmd_to_run.sh ] ; then
         # create in menu flag
         flag_add "in_menu"

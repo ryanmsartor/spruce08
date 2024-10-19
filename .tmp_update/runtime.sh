@@ -113,8 +113,8 @@ if [ ! -f "$SPLORE_CART" ]; then
 	touch "$SPLORE_CART" && log_message "created $SPLORE_CART"
 fi
 
-# launch splore!
-/mnt/SDCARD/Emu/.emu_setup/standard_launch.sh "$SPLORE_CART"
+
+flag_add "splore"
 
 # start main loop
 log_message "Starting main loop"

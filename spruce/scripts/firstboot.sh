@@ -40,19 +40,11 @@ fi
         /mnt/SDCARD/spruce/scripts/iconfresh.sh --silent
     } &
 
-    display -d 3 -i "$SPRUCE_LOGO" -t "Installing spruce08 v0.1.0!
-     
-     " -p bottom
-
     VERSION=$(cat /usr/miyoo/version)
     if [ "$VERSION" -lt 20240713100458 ]; then
         log_message "Detected firmware version $VERSION, suggesting update"
         display -i "$BG_IMAGE" --icon "$FW_ICON" -d 5 -p bottom -t "Visit the App section from the main menu to update your firmware to the latest version. It fixes the A30's Wi-Fi issues!"
     fi
-    
-    display -d 3 --icon "$HAPPY_ICON" -t "Happy gaming..........!
-     
-     " -p bottom
 
     flag_remove "first_boot"
     log_message "Removed first boot flag" -v

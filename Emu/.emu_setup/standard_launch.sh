@@ -26,14 +26,6 @@ fi
 ##### LAUNCH STUFF #####
 
 case $EMU_NAME in
-	"MEDIA")
-		export HOME=$EMU_DIR
-		export PATH=$EMU_DIR/bin:$PATH
-		export LD_LIBRARY_PATH=$EMU_DIR/libs:/usr/miyoo/lib:/usr/lib:$LD_LIBRARY_PATH
-		cd $EMU_DIR
-		ffplay -vf transpose=2 -fs -i "$1"
-		;;
-
 	"PICO8")
 		export HOME="$EMU_DIR"
 		export PATH="$HOME"/bin:$PATH

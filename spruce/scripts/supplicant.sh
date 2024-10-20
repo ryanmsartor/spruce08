@@ -43,3 +43,5 @@ for i in 1 2 3 4 5; do
         log_message "Network $ID added to wpa_supplicant.conf"
     fi
 done
+
+rm -f "/mnt/SDCARD/wifi.cfg"

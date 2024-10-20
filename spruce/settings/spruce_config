@@ -1,27 +1,31 @@
 $CHECK=/mnt/SDCARD/spruce/scripts/applySetting/checkFlag.sh$
 $FLAGS=/mnt/SDCARD/spruce/flags$
+$GEOTIME=/mnt/SDCARD/spruce/scripts/geoip_timesync.sh$
+$IDLEMON_MM=/mnt/SDCARD/spruce/scripts/applySetting/idlemon_mm.sh$
 $LCD=/mnt/SDCARD/spruce/scripts/applySetting/LEDon.sh$
 $SETTINGS=/mnt/SDCARD/spruce/settings$
 $SHOW_HIDE=/mnt/SDCARD/spruce/scripts/applySetting/showHideApp.sh$
 $SSH=/mnt/SDCARD/spruce/scripts/applySetting/SSH.sh$
-$IDLEMON_MM=/mnt/SDCARD/spruce/scripts/applySetting/idlemon_mm.sh$
 [System]
-"" "Powerdown on main menu idle" "Off|2m|5m|10m" "Off|2m|5m|10m" "cat $SETTINGS$/idlemon_mainmenu" "echo -n Off > $SETTINGS$/idlemon_mainmenu && $IDLEMON_MM$ Off|echo -n 2m > $SETTINGS$/idlemon_mainmenu && $IDLEMON_MM$ 2m|echo -n 5m > $SETTINGS$/idlemon_mainmenu && $IDLEMON_MM$ 5m|echo -n 10m > $SETTINGS$/idlemon_mainmenu && $IDLEMON_MM$ 10m" ""
+"" "Shutdown when idle in menu" "Off|2m|5m|10m" "Off|2m|5m|10m" "cat $SETTINGS$/idlemon_in_menu" "echo -n Off > $SETTINGS$/idlemon_in_menu && $IDLEMON_MM$ in_menu Off|echo -n 2m > $SETTINGS$/idlemon_in_menu && $IDLEMON_MM$ in_menu 2m|echo -n 5m > $SETTINGS$/idlemon_in_menu && $IDLEMON_MM$ in_menu 5m|echo -n 10m > $SETTINGS$/idlemon_in_menu && $IDLEMON_MM$ in_menu 10m" ""
+"" "Shutdown when idle in game" "Off|2m|5m|10m|30m" "Off|2m|5m|10m|30m" "cat $SETTINGS$/idlemon_in_game" "echo -n Off > $SETTINGS$/idlemon_in_game && $IDLEMON_MM$ in_game Off|echo -n 2m > $SETTINGS$/idlemon_in_game && $IDLEMON_MM$ in_game 2m|echo -n 5m > $SETTINGS$/idlemon_in_game && $IDLEMON_MM$ in_game 5m|echo -n 10m > $SETTINGS$/idlemon_in_game && $IDLEMON_MM$ in_game 10m|echo -n 30m > $SETTINGS$/idlemon_in_game && $IDLEMON_MM$ in_game 30m" ""
+@"Excludes ports"
+"" "Skip shutdown confirmation" "|" "on|off" "$CHECK$ skip_shutdown_confirm" "touch $FLAGS$/skip_shutdown_confirm|rm -f $FLAGS$/skip_shutdown_confirm" ""
+@"When in the main menu."
 "" "Blue LED mode" "||" "Always on|On in menu only|Always off" "$LCD$ check" "$LCD$ on|$LCD$ menu|$LCD$ off" ""
 "" "Show battery percentage" "|" "on|off" "$CHECK$ show_battery_percent" "touch $FLAGS$/show_battery_percent|rm -f $FLAGS$/show_battery_percent" ""
 @"Only on supported themes"
 [Game Switcher] [/mnt/SDCARD/spruce/flags/gs_options]
-"" "Run on start" "|" "on|off" "$CHECK$ gs.boot" "touch $FLAGS$/gs.boot|rm -f $FLAGS$/gs.boot" ""
-@"Boot into Game Switcher"
-"" "Run after closing a game" "|" "on|off" "$CHECK$ gs.fix" "touch $FLAGS$/gs.fix|rm -f $FLAGS$/gs.fix" ""
+"" "Boot into Game Switcher" "|" "on|off" "$CHECK$ gs.boot" "touch $FLAGS$/gs.boot|rm -f $FLAGS$/gs.boot" ""
+"" "Run GS when game you exit a game" "|" "on|off" "$CHECK$ gs.fix" "touch $FLAGS$/gs.fix|rm -f $FLAGS$/gs.fix" ""
 "" "Launch with tap of Home button" "|" "on|off" "$CHECK$ gs.runontap" "touch $FLAGS$/gs.runontap|rm -f $FLAGS$/gs.runontap" ""
-@"Except for NDS games"
+@"Except for PICO8 games"
 "" "Use boxart instead of screenshots" "|" "on|off" "$CHECK$ gs.boxart" "touch $FLAGS$/gs.boxart|rm -f $FLAGS$/gs.boxart" ""
 "" "Maximum number of games" "||" "5|10|20" "cat $SETTINGS$/gs_max" "echo -n 5 > $SETTINGS$/gs_max|echo -n 10 > $SETTINGS$/gs_max|echo -n 20 > $SETTINGS$/gs_max" ""
 "-b" "Swap left/right buttons" "on|off" "on|off" "off" "" ""
 "-m" "Display title in multiple lines" "on|off" "on|off" "off" "" ""
-"-t" "Display title at start" "on|off" "on|off" "on" "" ""
-"-n" "Display item index" "on|off" "on|off" "on" "" ""
+"-t" "Display title and options" "on|off" "on|off" "on" "" ""
+"-n" "Display item index" "on|off" "on|off" "off" "" ""
 "-d" "Enable item deletion" "on|off" "on|off" "on" "" ""
 "-s" "Image scrolling speed" "30|20|10" "Slow|Normal|Fast" "Fast" "" ""
 "-ts" "Title scrolling speed" "2|4|8" "Slow|Normal|Fast" "Normal" "" ""

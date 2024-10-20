@@ -14,8 +14,8 @@ export LD_LIBRARY_PATH="$SYSTEM_PATH/lib:${LD_LIBRARY_PATH}"
 export HOME="${SDCARD_PATH}"
 export HELPER_FUNCTIONS="/mnt/SDCARD/spruce/scripts/helperFunctions.sh"
 
-mkdir /var/lib /var/lib/alsa ### We create the directories that by default are not included in the system.
-mount -o bind "/mnt/SDCARD/.tmp_update/lib" /var/lib ###We mount the folder that includes the alsa configuration, just as the system should include it.
+mkdir /var/lib /var/lib/alsa ### Create the directories that by default are not included in the system.
+mount -o bind "/mnt/SDCARD/.tmp_update/lib" /var/lib ### We mount the folder that includes the alsa configuration, just as the system should include it.
 mount -o bind /mnt/SDCARD/miyoo/app /usr/miyoo/app
 mount -o bind /mnt/SDCARD/miyoo/lib /usr/miyoo/lib
 mount -o bind /mnt/SDCARD/miyoo/res /usr/miyoo/res
@@ -23,6 +23,9 @@ mount -o bind "/mnt/SDCARD/.tmp_update/etc/profile" /etc/profile
 
 # Load helper functions and helpers
 . /mnt/SDCARD/spruce/scripts/helperFunctions.sh
+. /mnt/SDCARD/spruce/scripts/runtimeHelper.sh
+
+rotate_logs &
 
 SPLASH="/mnt/SDCARD/spruce/imgs/spruce08.bmp"
 display -i "$SPLASH"
@@ -47,10 +50,7 @@ else
     touch /tmp/wifion
     log_message "WiFi turned on"
 fi
-killall -9 main
-
-# Bring up network services
-nice -n -20 /mnt/SDCARD/spruce/scripts/networkservices.sh &
+killall -9 main ### SUPER important in preventing .tmp_update suicide
 
 # Check for first_boot flag and run ThemeUnpacker accordingly
 if flag_check "first_boot"; then
@@ -60,7 +60,6 @@ else
     ${NEW_SCRIPTS_DIR}/ThemeUnpacker.sh
 fi
 
-# Checks if quick-resume is active and runs it if not returns to this point.
 alsactl nrestore ###We tell the sound driver to load the configuration.
 log_message "ALSA configuration loaded"
 
@@ -69,13 +68,12 @@ log_message "ALSA configuration loaded"
 keymon /dev/input/event3 &
 ${NEW_SCRIPTS_DIR}/powerbutton_watchdog.sh &
 
-# rename ttyS0 to ttyS2, therefore PPSSPP cannot read the joystick raw data
+# rename ttyS0 to ttyS2 so that PPSSPP cannot read the joystick raw data
 mv /dev/ttyS0 /dev/ttyS2
 # create virtual joypad from keyboard input, it should create /dev/input/event4 system file
 cd /mnt/SDCARD/.tmp_update/bin
 ./joypad /dev/input/event3 &
-# wait long enough for creating virtual joypad
-sleep 0.3
+sleep 0.3 ### wait long enough to create the virtual joypad
 # read joystick raw data from serial input and apply calibration,
 # then send to /dev/input/event4
 ( ./joystickinput /dev/ttyS2 /config/joypad.config | ./sendevent /dev/input/event4 ) &
@@ -90,12 +88,19 @@ if [ "$VERSION" -lt 20240713100458 ]; then
     log_message "Detected firmware version $VERSION; enabling -FirmwareUpdate- app"
 fi
 
+# Load idle monitors before game resume or MainUI
+${NEW_SCRIPTS_DIR}/applySetting/idlemon_mm.sh
+
 # "${NEW_SCRIPTS_DIR}/autoIconRefresh.sh" &
 
 lcd_init 1
 
+# check whether to run first boot procedure
+if flag_check "first_boot"; then
 "${NEW_SCRIPTS_DIR}/firstboot.sh"
-log_message "First boot script executed"
+else
+    log_message "First boot flag not found. Skipping first boot procedures."
+fi
 
 swapon -p 40 "${SWAPFILE}"
 log_message "Swap file activated"
@@ -103,8 +108,7 @@ log_message "Swap file activated"
 # Run scripts for initial setup
 # ${NEW_SCRIPTS_DIR}/forcedisplay.sh
 ${NEW_SCRIPTS_DIR}/low_power_warning.sh
-# ${NEW_SCRIPTS_DIR}/checkfaves.sh &
-${NEW_SCRIPTS_DIR}/applySetting/idlemon_mm.sh
+${NEW_SCRIPTS_DIR}/checkfaves.sh &
 log_message "Initial setup scripts executed"
 kill_images
 

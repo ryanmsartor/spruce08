@@ -40,7 +40,6 @@ while [ 1 ]; do
     if [ ! -f /tmp/cmd_to_run.sh ] ; then
         # create in menu flag
         flag_add "in_menu"
-
         cd ${SYSTEM_PATH}/app/
 
         # Check for the themeChanged flag
@@ -49,6 +48,7 @@ while [ 1 ]; do
             flag_remove "themeChanged"
         fi
 
+        # Check for the low_battery flag
         if flag_check "low_battery"; then
             CAPACITY=$(cat /sys/class/power_supply/battery/capacity)
             display -t "Battery has $CAPACITY% left. Charge or shutdown your device." -c dbcda7 --okay
@@ -64,7 +64,9 @@ while [ 1 ]; do
         # check if emu visibility needs a refresh, before entering MainUI
         /mnt/SDCARD/spruce/scripts/emufresh_md5_multi.sh
 
+        # run Main menu
         ./MainUI &> /dev/null
+
         # remove in menu flag
         flag_remove "in_menu"
     fi

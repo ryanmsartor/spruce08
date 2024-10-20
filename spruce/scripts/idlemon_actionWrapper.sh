@@ -11,12 +11,15 @@ process_name=$1
 # Handle different process names....
 case "$process_name" in
     MainUI)
-        vibrate
+	    echo heartbeat > /sys/devices/platform/sunxi-led/leds/led1/trigger
+		killall -q -0 MainUI
+        alsactl store
+		vibrate
         sync
         poweroff
         ;;
-    /mnt/SDCARD/RetroArch/ra32.miyoo)
-        #/mnt/SDCARD/spruce/scripts/SUPER-DUPER-CLEAN-SHUTDOWN-TBD.sh
+    ra32.miyoo|drastic|PPSSPP)
+        /mnt/SDCARD/spruce/scripts/save_poweroff.sh
         ;;
     *)
         exit 1

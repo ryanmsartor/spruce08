@@ -97,7 +97,7 @@ lcd_init 1
 
 # check whether to run first boot procedure
 if flag_check "first_boot"; then
-"${NEW_SCRIPTS_DIR}/firstboot.sh"
+    "${NEW_SCRIPTS_DIR}/firstboot.sh"
 else
     log_message "First boot flag not found. Skipping first boot procedures."
 fi

@@ -48,6 +48,7 @@ if [ "$wifi" -eq 0 ]; then
 else
     touch /tmp/wifion
     log_message "WiFi turned on"
+    check_and_connect_wifi # wait for wifi only if turned on
 fi
 killall -9 main ### SUPER important in preventing .tmp_update suicide
 

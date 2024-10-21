@@ -25,7 +25,6 @@
 
 DISPLAY_TEXT_FILE="/mnt/SDCARD/spruce/bin/display_text.elf"
 FLAGS_DIR="/mnt/SDCARD/spruce/flags"
-INOTIFY="/mnt/SDCARD/.tmp_update/bin/inotify.elf"
 
 # Export for enabling SSL support in CURL
 export SSL_CERT_FILE=/mnt/SDCARD/miyoo/app/ca-certificates.crt
@@ -82,7 +81,9 @@ check_and_connect_wifi() {
     messages_file="/var/log/messages"
 
     log_message "Attempting to connect to WiFi"
-    show_image "/mnt/SDCARD/.tmp_update/res/waitingtoconnect.png" 1
+    display --icon "/mnt/SDCARD/spruce/imgs/signal.png" -d 1 -t "Waiting to connect..........
+     
+    Press START to continue anyway." -p bottom
 
     ifconfig wlan0 up
     wpa_supplicant -B -i wlan0 -c /etc/wpa_supplicant.conf
@@ -132,7 +133,7 @@ confirm(){
         fi
 
         # Wait for log message update (with a 1-second timeout)
-        if ! $INOTIFY -t 1000 "$messages_file"; then
+        if ! inotifywait -t 1000 "$messages_file"; then
             continue
         fi
 

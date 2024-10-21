@@ -5,8 +5,7 @@ echo L,L2,R,R2,X,A,B,Y > /sys/module/gpio_keys_polled/parameters/button_config
 SETTINGS_FILE="/config/system.json"
 SWAPFILE="/mnt/SDCARD/cachefile"
 SDCARD_PATH="/mnt/SDCARD"
-SCRIPTS_DIR="${SDCARD_PATH}/.tmp_update/scripts"
-NEW_SCRIPTS_DIR="${SDCARD_PATH}/spruce/scripts"
+SCRIPTS_DIR="${SDCARD_PATH}/spruce/scripts"
 
 export SYSTEM_PATH="${SDCARD_PATH}/miyoo"
 export PATH="$SYSTEM_PATH/app:${PATH}"
@@ -19,7 +18,7 @@ mount -o bind "/mnt/SDCARD/.tmp_update/lib" /var/lib ### We mount the folder tha
 mount -o bind /mnt/SDCARD/miyoo/app /usr/miyoo/app
 mount -o bind /mnt/SDCARD/miyoo/lib /usr/miyoo/lib
 mount -o bind /mnt/SDCARD/miyoo/res /usr/miyoo/res
-mount -o bind "/mnt/SDCARD/.tmp_update/etc/profile" /etc/profile
+mount -o bind "/mnt/SDCARD/miyoo/etc/profile" /etc/profile
 
 # Load helper functions and helpers
 . /mnt/SDCARD/spruce/scripts/helperFunctions.sh
@@ -38,8 +37,8 @@ flag_remove "in_menu"
 
 log_message "---------Starting up---------"
 
-# Generate wpa_supplicant.conf from wifi.cfg if available.
-${NEW_SCRIPTS_DIR}/multipass.sh
+# Generate wpa_supplicant.conf from wifi.cfg if available
+${SCRIPTS_DIR}/multipass.sh
 
 # Check if WiFi is enabled
 wifi=$(grep '"wifi"' /config/system.json | awk -F ':' '{print $2}' | tr -d ' ,')
@@ -54,10 +53,10 @@ killall -9 main ### SUPER important in preventing .tmp_update suicide
 
 # Check for first_boot flag and run ThemeUnpacker accordingly
 if flag_check "first_boot"; then
-    ${NEW_SCRIPTS_DIR}/ThemeUnpacker.sh --silent &
+    ${SCRIPTS_DIR}/ThemeUnpacker.sh --silent &
     log_message "ThemeUnpacker started silently in background due to firstBoot flag"
 else
-    ${NEW_SCRIPTS_DIR}/ThemeUnpacker.sh
+    ${SCRIPTS_DIR}/ThemeUnpacker.sh
 fi
 
 alsactl nrestore ###We tell the sound driver to load the configuration.
@@ -66,7 +65,7 @@ log_message "ALSA configuration loaded"
 # ensure keymon is running first and only listen to event0 for power button & event3 for keyboard events
 # keymon /dev/input/event0 &
 keymon /dev/input/event3 &
-${NEW_SCRIPTS_DIR}/powerbutton_watchdog.sh &
+${SCRIPTS_DIR}/powerbutton_watchdog.sh &
 
 # rename ttyS0 to ttyS2 so that PPSSPP cannot read the joystick raw data
 mv /dev/ttyS0 /dev/ttyS2
@@ -79,7 +78,7 @@ sleep 0.3 ### wait long enough to create the virtual joypad
 ( ./joystickinput /dev/ttyS2 /config/joypad.config | ./sendevent /dev/input/event4 ) &
         
 # run game switcher watchdog
-/mnt/SDCARD/spruce/scripts/gameswitcher_watchdog.sh &
+${SCRIPTS_DIR}/gameswitcher_watchdog.sh &
 
 # unhide -FirmwareUpdate- App only if necessary
 VERSION="$(cat /usr/miyoo/version)"
@@ -89,15 +88,15 @@ if [ "$VERSION" -lt 20240713100458 ]; then
 fi
 
 # Load idle monitors before game resume or MainUI
-${NEW_SCRIPTS_DIR}/applySetting/idlemon_mm.sh
+${SCRIPTS_DIR}/applySetting/idlemon_mm.sh
 
-"${NEW_SCRIPTS_DIR}/autoIconRefresh.sh" &
+"${SCRIPTS_DIR}/autoIconRefresh.sh" &
 
 lcd_init 1
 
 # check whether to run first boot procedure
 if flag_check "first_boot"; then
-    "${NEW_SCRIPTS_DIR}/firstboot.sh"
+    "${SCRIPTS_DIR}/firstboot.sh"
 else
     log_message "First boot flag not found. Skipping first boot procedures."
 fi
@@ -106,9 +105,9 @@ swapon -p 40 "${SWAPFILE}"
 log_message "Swap file activated"
 
 # Run scripts for initial setup
-${NEW_SCRIPTS_DIR}/forcedisplay.sh
-${NEW_SCRIPTS_DIR}/low_power_warning.sh
-${NEW_SCRIPTS_DIR}/checkfaves.sh &
+#${SCRIPTS_DIR}/forcedisplay.sh
+${SCRIPTS_DIR}/low_power_warning.sh
+${SCRIPTS_DIR}/checkfaves.sh &
 log_message "Initial setup scripts executed"
 kill_images
 
@@ -134,4 +133,4 @@ echo "/mnt/SDCARD/Emu/PICO8/launch.sh \"$SPLORE_CART\"" > "/tmp/cmd_to_run.sh"
 
 # start main loop
 log_message "Starting main loop"
-${NEW_SCRIPTS_DIR}/principal.sh
+${SCRIPTS_DIR}/principal.sh

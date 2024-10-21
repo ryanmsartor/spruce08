@@ -28,8 +28,6 @@ if flag_check "in_menu"; then
 		# show notification screen
 		display --text "Are you sure you want to shutdown?" --image "/mnt/SDCARD/spruce/imgs/bg_tree.png" --confirm
 		if confirm 30; then
-			# remove lastgame flag to prevent loading any App after next boot
-			rm "${FLAGS_DIR}/lastgame.lock"
 			# turn off screen
 			echo 0 >/sys/devices/virtual/disp/disp/attr/lcdbl
 		else
@@ -41,7 +39,6 @@ if flag_check "in_menu"; then
 		fi
 	else
 		# If skip_shutdown_confirm flag is set or not in menu, proceed with shutdown
-		rm "${FLAGS_DIR}/lastgame.lock"
 		echo 0 >/sys/devices/virtual/disp/disp/attr/lcdbl
 	fi
 fi
@@ -59,8 +56,6 @@ killall -q -15 enforceSmartCPU.sh
 # kill app if not emulator is running
 if cat /tmp/cmd_to_run.sh | grep -q -v '/mnt/SDCARD/Emu'; then
 	kill_current_process
-	# remove lastgame flag to prevent loading any App after next boot
-	rm "${FLAGS_DIR}/lastgame.lock"
 fi
 
 # kill PICO8 if PICO8 is running
@@ -78,15 +73,6 @@ if pgrep "ra32.miyoo" >/dev/null; then
 	# } | $BIN_PATH/sendevent /dev/input/event3
 	# sleep 0.3
 	killall -q -15 ra32.miyoo
-elif pgrep "PPSSPPSDL" >/dev/null; then
-	{
-		echo 1 314 1 # SELECT down
-		echo 3 2 255 # L2 down
-		echo 3 2 0   # L2 up
-		echo 1 314 0 # SELECT up
-		echo 0 0 0   # tell sendevent to exit
-	} | $BIN_PATH/sendevent /dev/input/event4
-	sleep 1
 else
 	killall -q -15 retroarch
 	killall -q -9 MainUI
@@ -103,10 +89,6 @@ done
 display --icon "/mnt/SDCARD/spruce/imgs/save.png" -t "Saving and shutting down... Please wait a moment.
  
  " -p bottom
-
-# Created save_active flag
-flag_add "save_active"
-
 
 # Saved current sound settings
 alsactl store

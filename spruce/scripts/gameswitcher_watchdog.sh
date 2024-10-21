@@ -87,31 +87,7 @@ prepare_game_switcher() {
     # kill RA or other emulator or MainUI
     log_message "*** gameswitcher_watchdog.sh: Killing all Emus and MainUI!" -v
 
-    if pgrep -x "./drastic" > /dev/null ; then
-        # use sendevent to send MENU + L1 combin buttons to drastic  
-        {
-            #echo 1 28 0  # START up, to avoid screen brightness is changed by L1 key press below
-            #echo 1 1 1   # MENU down
-            echo 1 15 1  # L1 down
-            echo 1 15 0  # L1 up
-            echo 1 1 0   # MENU up
-            echo 0 0 0   # tell sendevent to exit
-        } | $BIN_PATH/sendevent /dev/input/event3
-    elif pgrep "PPSSPPSDL" > /dev/null ; then
-        # use sendevent to send SELECT + L2 combin buttons to PPSSPP  
-        {
-            # send autosave hot key
-            echo 1 314 1  # SELECT down
-            echo 3 2 255  # L2 down
-            echo 3 2 0    # L2 up
-            echo 1 314 0  # SELECT up
-            echo 0 0 0    # tell sendevent to exit
-        } | $BIN_PATH/sendevent /dev/input/event4
-        # wait 1 seconds for ensuring saving is started
-        sleep 1
-        # kill PPSSPP with signal 15, it should exit after saving is done
-        killall -15 PPSSPPSDL
-    elif pgrep "ra32.miyoo" > /dev/null ; then
+    if pgrep "ra32.miyoo" > /dev/null ; then
         killall -q -15 ra32.miyoo
     else
         killall -q -15 retroarch || \
@@ -146,8 +122,6 @@ long_press_handler() {
     # if IS long press
     if pgrep "MainUI" > /dev/null ; then
         prepare_game_switcher
-    elif pgrep "drastic" > /dev/null ; then
-        prepare_game_switcher
     elif pgrep "pico8_dyn" > /dev/null; then
         prepare_game_switcher
 
@@ -156,15 +130,11 @@ long_press_handler() {
             send_virtual_key
         elif pgrep "retroarch" > /dev/null ; then
             send_virtual_key
-        elif pgrep "PPSSPPSDL" > /dev/null ; then
-            send_virtual_key
         fi
     else
         if pgrep "ra32.miyoo" > /dev/null ; then
             prepare_game_switcher
         elif pgrep "retroarch" > /dev/null ; then
-            prepare_game_switcher
-        elif pgrep "PPSSPPSDL" > /dev/null ; then
             prepare_game_switcher
         fi
     fi
@@ -192,15 +162,11 @@ $BIN_PATH/getevent /dev/input/event3 | while read line; do
                         prepare_game_switcher
                     elif pgrep "retroarch" > /dev/null ; then
                         prepare_game_switcher
-                    elif pgrep "PPSSPPSDL" > /dev/null ; then
-                        prepare_game_switcher
                     fi
                 else
                     if pgrep "ra32.miyoo" > /dev/null ; then
                         send_virtual_key
                     elif pgrep "retroarch" > /dev/null ; then
-                        send_virtual_key
-                    elif pgrep "PPSSPPSDL" > /dev/null ; then
                         send_virtual_key
                     fi
                 fi

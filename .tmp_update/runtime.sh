@@ -21,8 +21,8 @@ mount -o bind /mnt/SDCARD/miyoo/res /usr/miyoo/res
 mount -o bind "/mnt/SDCARD/miyoo/etc/profile" /etc/profile
 
 # Load helper functions and helpers
-. /mnt/SDCARD/spruce/scripts/helperFunctions.sh
-. /mnt/SDCARD/spruce/scripts/runtimeHelper.sh
+. ${SCRIPTS_DIR}/helperFunctions.sh
+. ${SCRIPTS_DIR}/runtimeHelper.sh
 
 rotate_logs &
 

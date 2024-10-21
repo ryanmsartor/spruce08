@@ -51,7 +51,7 @@ while read -r CMD; do
         EMU_DIR="/mnt/SDCARD/Emu/${EMU_NAME}"
         DEF_DIR="/mnt/SDCARD/Emu/.emu_setup/defaults"
         DEF_FILE="$DEF_DIR/${EMU_NAME}.opt"
-            . "$DEF_FILE"
+        . "$DEF_FILE"
         core_info="$INFO_DIR/${CORE}_libretro.info"
         core_name="$(awk -F' = ' '/corename/ {print $2}' "$core_info")"
         core_name="$(echo ${core_name} | tr -d '"')"

@@ -1,6 +1,6 @@
 #!/bin/sh
 
-. "$HELPER_FUNCTIONS"
+. /mnt/SDCARD/spruce/scripts/helperFunctions.sh
 
 SETTINGS_FILE="/config/system.json"
 SWAPFILE="/mnt/SDCARD/cachefile"

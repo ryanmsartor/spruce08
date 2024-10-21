@@ -12,6 +12,8 @@ $SSH=/mnt/SDCARD/spruce/scripts/applySetting/SSH.sh$
 @"Excludes ports"
 "" "Skip shutdown confirmation" "|" "on|off" "$CHECK$ skip_shutdown_confirm" "touch $FLAGS$/skip_shutdown_confirm|rm -f $FLAGS$/skip_shutdown_confirm" ""
 @"When in the main menu."
+"" "Home key opens RA menu directly" "|" "on|off" "$CHECK$ expertRa" "touch $FLAGS$/expertRa|rm -f $FLAGS$/expertRa" ""
+@"For systems that use RetroArch"
 "" "Blue LED mode" "||" "Always on|On in menu only|Always off" "$LCD$ check" "$LCD$ on|$LCD$ menu|$LCD$ off" ""
 "" "Show battery percentage" "|" "on|off" "$CHECK$ show_battery_percent" "touch $FLAGS$/show_battery_percent|rm -f $FLAGS$/show_battery_percent" ""
 @"Only on supported themes"

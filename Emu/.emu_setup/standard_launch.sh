@@ -49,7 +49,11 @@ case $EMU_NAME in
 		;;
 
 	*)
-		RA_BIN="ra32.miyoo"
+		if flag_check "expertRA"; then
+			export RA_BIN="retroarch"
+		else
+			export RA_BIN="ra32.miyoo"
+		fi
 		RA_DIR="/mnt/SDCARD/RetroArch"
 		cd "$RA_DIR"
 

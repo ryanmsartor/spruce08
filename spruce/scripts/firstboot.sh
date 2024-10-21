@@ -37,7 +37,6 @@ fi
         log_message "Created new swap file" -v
     fi
     
-    /mnt/SDCARD/spruce/scripts/emufresh_md5_multi.sh
     /mnt/SDCARD/spruce/scripts/iconfresh.sh --silent
 } &
 

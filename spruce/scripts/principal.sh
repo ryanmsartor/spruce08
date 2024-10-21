@@ -54,9 +54,6 @@ while [ 1 ]; do
         display_kill
         kill_images
 
-        # check if emu visibility needs a refresh, before entering MainUI
-        /mnt/SDCARD/spruce/scripts/emufresh_md5_multi.sh
-
         # run Main menu
         ./MainUI &> /dev/null
 

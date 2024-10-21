@@ -91,7 +91,7 @@ fi
 # Load idle monitors before game resume or MainUI
 ${NEW_SCRIPTS_DIR}/applySetting/idlemon_mm.sh
 
-# "${NEW_SCRIPTS_DIR}/autoIconRefresh.sh" &
+"${NEW_SCRIPTS_DIR}/autoIconRefresh.sh" &
 
 lcd_init 1
 
@@ -106,7 +106,7 @@ swapon -p 40 "${SWAPFILE}"
 log_message "Swap file activated"
 
 # Run scripts for initial setup
-# ${NEW_SCRIPTS_DIR}/forcedisplay.sh
+${NEW_SCRIPTS_DIR}/forcedisplay.sh
 ${NEW_SCRIPTS_DIR}/low_power_warning.sh
 ${NEW_SCRIPTS_DIR}/checkfaves.sh &
 log_message "Initial setup scripts executed"
@@ -128,7 +128,6 @@ fi
 if [ -f "/mnt/SDCARD/pico8_dyn" ] && [ ! -f "/mnt/SDCARD/Emu/PICO8/bin/pico8_dyn" ]; then
     cp "/mnt/SDCARD/pico8_dyn" "/mnt/SDCARD/Emu/PICO8/bin/pico8_dyn"
 fi
-
 
 # tell principal.sh to run splore
 echo "/mnt/SDCARD/Emu/PICO8/launch.sh \"$SPLORE_CART\"" > "/tmp/cmd_to_run.sh"

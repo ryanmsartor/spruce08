@@ -96,7 +96,7 @@ check_and_connect_wifi() {
             log_message "WiFi connection cancelled by user"
             return 1
         fi
-        sleep 1
+        sleep 0.1
     done
 }
 

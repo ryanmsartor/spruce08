@@ -19,13 +19,6 @@
 # Source the helper functions
 . /mnt/SDCARD/spruce/scripts/helperFunctions.sh
 
-runifnecessary() {
-    a=$(ps | grep $1 | grep -v grep)
-    if [ "$a" == "" ]; then
-        $2 &
-    fi
-}
-
 if [ -f /mnt/SDCARD/spruce/flags/gs.boot ] ; then
     touch /mnt/SDCARD/spruce/flags/gs.lock
 fi

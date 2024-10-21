@@ -89,13 +89,19 @@ check_and_connect_wifi() {
     wpa_supplicant -B -i wlan0 -c /etc/wpa_supplicant.conf
     udhcpc -i wlan0 &
 
-    while true; do
+    get_event | while read input; do
         if ifconfig wlan0 | grep -qE "inet |inet6 "; then
+            killall getevent
             log_message "Successfully connected to WiFi"
             return 0
-        elif tail -n1 "$messages_file" | grep -q "enter_pressed 0"; then
-            log_message "WiFi connection cancelled by user"
-            return 1
+        else
+            case "$input" in
+            *"$B_START 1"*)
+                killall getevent
+                log_message "START pressed. Continuing without waiting for wifi."
+                return 1
+                ;;
+            esac
         fi
         sleep 0.1
     done

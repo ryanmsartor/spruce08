@@ -29,7 +29,7 @@ case $EMU_NAME in
 	"PICO8")
 		export HOME="$EMU_DIR"
 		export PATH="$HOME"/bin:$PATH
-		export LD_LIBRARY_PATH="$HOME"/lib:$LD_LIBRARY_PATH
+		export LD_LIBRARY_PATH="$HOME"/lib-stew:$LD_LIBRARY_PATH
 		export SDL_VIDEODRIVER=mali
 		export SDL_JOYSTICKDRIVER=a30
 		cd "$HOME"

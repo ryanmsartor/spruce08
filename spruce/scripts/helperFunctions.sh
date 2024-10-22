@@ -81,12 +81,12 @@ check_and_connect_wifi() {
     messages_file="/var/log/messages"
 
     log_message "Attempting to connect to WiFi"
-    display --icon "/mnt/SDCARD/spruce/imgs/signal.png" -t "Waiting to connect..........
-     
-    Press START to continue anyway." -p bottom
+    display --icon "/mnt/SDCARD/spruce/imgs/signal.png" -t "Waiting to connect....
+Press START to continue anyway.
+ " -p bottom
 
     ifconfig wlan0 up
-    wpa_supplicant -B -i wlan0 -c /etc/wpa_supplicant.conf
+    wpa_supplicant -B -i wlan0 -c /config/wpa_supplicant.conf
     udhcpc -i wlan0 &
 
     while true; do
@@ -94,7 +94,7 @@ check_and_connect_wifi() {
             log_message "Successfully connected to WiFi"
             display_kill
             return 0
-        elif tail -n1 "$messages_file" | grep -q "enter_pressed 0"; then
+        elif tail -n5 "$messages_file" | grep -q "enter_pressed 0"; then
             log_message "WiFi connection cancelled by user"
             display_kill
             return 1

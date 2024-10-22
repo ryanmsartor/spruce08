@@ -77,30 +77,39 @@ acknowledge() {
     done
 }
 
-check_and_connect_wifi() {
+check_and_connect_wifi() {  
     messages_file="/var/log/messages"
 
-    log_message "Attempting to connect to WiFi"
-    display --icon "/mnt/SDCARD/spruce/imgs/signal.png" -t "Waiting to connect....
+    # Check for connection first
+    if ! ifconfig wlan0 | grep -qE "inet |inet6 "; then
+    
+        log_message "Attempting to connect to WiFi"
+        
+        # Bring the existing interface down cleanly if its running
+        ifconfig wlan0 down
+        killall wpa_supplicant
+        killall udhcpc
+        
+        # Restart the interface and try to connect
+        ifconfig wlan0 up
+        wpa_supplicant -B -i wlan0 -c /config/wpa_supplicant.conf
+        udhcpc -i wlan0 &
+        
+        display --icon "/mnt/SDCARD/spruce/imgs/signal.png" -p bottom -t "Waiting to connect....
 Press START to continue anyway.
- " -p bottom
-
-    ifconfig wlan0 up
-    wpa_supplicant -B -i wlan0 -c /config/wpa_supplicant.conf
-    udhcpc -i wlan0 &
-
-    while true; do
-        if ifconfig wlan0 | grep -qE "inet |inet6 "; then
-            log_message "Successfully connected to WiFi"
-            display_kill
-            return 0
-        elif tail -n5 "$messages_file" | grep -q "enter_pressed 0"; then
-            log_message "WiFi connection cancelled by user"
-            display_kill
-            return 1
-        fi
-        sleep 0.01
-    done
+       "
+        while true; do
+            if ifconfig wlan0 | grep -qE "inet |inet6 "; then
+                log_message "Successfully connected to WiFi"
+                return 0
+            elif tail -n3 "$messages_file" | grep "enter_pressed 0" >/dev/null 2>&1; then
+                log_message "WiFi connection cancelled by user"
+				return 1
+            fi
+            sleep .5
+        done
+		 
+    fi
 }
 
 # Call this to wait for the user to confirm an action

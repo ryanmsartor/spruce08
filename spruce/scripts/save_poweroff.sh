@@ -95,13 +95,6 @@ display --icon "/mnt/SDCARD/spruce/imgs/save.png" -t "Saving and shutting down..
  
  " -p bottom
 
-# Created save_active flag
-if flag_check "in_menu"; then
-    flag_remove "save_active"
-else
-    flag_add "save_active"
-fi
-
 # Saved current sound settings
 alsactl store
 

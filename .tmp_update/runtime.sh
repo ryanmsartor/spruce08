@@ -37,7 +37,6 @@ log_file="/mnt/SDCARD/Saves/spruce/spruce.log"
 flag_remove "themeChanged"
 flag_remove "log_verbose"
 flag_remove "low_battery"
-flag_remove "in_menu"
 
 log_message "---------Starting up---------"
 

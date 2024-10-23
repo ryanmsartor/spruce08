@@ -118,12 +118,12 @@ Press START to continue anyway.
             case $last_line in 
                 *"$B_START"* | *"$B_START_2"*)
                     log_message "WiFi connection cancelled by user"
-                    display_kill
+                    display -t "Loading game!" -i "/mnt/SDCARD/spruce/imgs/bg_tree.png"
                     return 1
                     ;;
                 *"Successfully connected to WiFi"*)
                     log_message "Successfully connected to WiFi"
-                    display_kill
+                    display -t "Loading game!" -i "/mnt/SDCARD/spruce/imgs/bg_tree.png"
                     return 0
                     ;; 
             esac

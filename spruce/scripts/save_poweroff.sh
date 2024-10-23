@@ -1,7 +1,7 @@
 #!/bin/sh
 . /mnt/SDCARD/spruce/scripts/helperFunctions.sh
 
-BIN_PATH="/mnt/SDCARD/.tmp_update/bin"
+BIN_PATH="/mnt/SDCARD/spruce/bin"
 FLAGS_DIR="/mnt/SDCARD/spruce/flags"
 
 kill_current_process() {
@@ -19,26 +19,31 @@ kill_current_process() {
 
 vibrate
 
-# ask for user response if MainUI is running and skip_shutdown_confirm flag is not set
-if flag_check "in_menu"; then
-	if ! flag_check "skip_shutdown_confirm"; then
+# ask for user response if MainUI is running and skip_shutdown_confirm setting is not set
+if flag_check "in_menu" || pgrep "pico8_dyn" >/dev/null; then
+	if ! setting_get "skip_shutdown_confirm"; then
 		messages_file="/var/log/messages"
-		# pause MainUI
+		# pause MainUI or pico8_dyn
 		killall -q -19 MainUI
+		killall -q -19 pico8_dyn
 		# show notification screen
 		display --text "Are you sure you want to shutdown?" --image "/mnt/SDCARD/spruce/imgs/bg_tree.png" --confirm
 		if confirm 30; then
+			# remove lastgame flag to prevent loading any App after next boot
+			rm "${FLAGS_DIR}/lastgame.lock"
 			# turn off screen
 			echo 0 >/sys/devices/virtual/disp/disp/attr/lcdbl
 		else
 			display_kill
-			# resume Mainui
+			# resume Mainui or pico8_dyn
 			killall -q -18 MainUI
+			killall -q -18 pico8_dyn
 			# exit script
 			return 0
 		fi
 	else
-		# If skip_shutdown_confirm flag is set or not in menu, proceed with shutdown
+		# If skip_shutdown_confirm setting is set or not in menu, proceed with shutdown
+		rm "${FLAGS_DIR}/lastgame.lock"
 		echo 0 >/sys/devices/virtual/disp/disp/attr/lcdbl
 	fi
 fi
@@ -90,8 +95,18 @@ display --icon "/mnt/SDCARD/spruce/imgs/save.png" -t "Saving and shutting down..
  
  " -p bottom
 
+# Created save_active flag
+if flag_check "in_menu"; then
+    flag_remove "save_active"
+else
+    flag_add "save_active"
+fi
+
 # Saved current sound settings
 alsactl store
+
+# Now that nothing might need it, organize settings file
+settings_organize
 
 # sync files and power off device
 sync

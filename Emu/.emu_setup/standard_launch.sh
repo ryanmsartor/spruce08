@@ -27,6 +27,10 @@ fi
 
 case $EMU_NAME in
 	"PICO8")
+        # send signal USR2 to joystickinput to switch to KEYBOARD MODE
+        # this allows joystick to be used as DPAD in MainUI
+        killall -USR2 joystickinput
+
 		export HOME="$EMU_DIR"
 		export PATH="$HOME"/bin:$PATH
 		export LD_LIBRARY_PATH="$HOME"/lib-stew:$LD_LIBRARY_PATH
@@ -40,6 +44,10 @@ case $EMU_NAME in
 			pico8_dyn -width 640 -height 480 -scancodes -run "$1"
 		fi
 		sync
+
+        # send signal USR1 to joystickinput to switch to ANALOG MODE
+        killall -USR1 joystickinput
+
 		;;
 
 	"PORTS")
@@ -47,9 +55,8 @@ case $EMU_NAME in
 		cd $PORTS_DIR
 		/bin/sh "$1"
 		;;
-
 	*)
-		if flag_check "expertRA"; then
+		if setting_get "expertRA"; then
 			export RA_BIN="retroarch"
 		else
 			export RA_BIN="ra32.miyoo"

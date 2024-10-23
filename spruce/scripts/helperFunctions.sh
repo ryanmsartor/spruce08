@@ -77,7 +77,12 @@ acknowledge() {
     done
 }
 
-check_and_connect_wifi() {  
+check_and_connect_wifi() {
+    
+    # ########################################################################
+    # WARNING: Avoid running this function in-game, it will lead to stuttters!
+    # ########################################################################
+    
     messages_file="/var/log/messages"
 
     # Check for connection first
@@ -98,17 +103,31 @@ check_and_connect_wifi() {
         display --icon "/mnt/SDCARD/spruce/imgs/signal.png" -p bottom -t "Waiting to connect....
 Press START to continue anyway.
        "
+        {
+            while true; do
+                if ifconfig wlan0 | grep -qE "inet |inet6 "; then
+                    echo "Successfully connected to WiFi" >> "$messages_file"
+                    break
+                fi
+                sleep 0.5
+            done
+        } &
         while true; do
-            if ifconfig wlan0 | grep -qE "inet |inet6 "; then
-                log_message "Successfully connected to WiFi"
-                return 0
-            elif tail -n3 "$messages_file" | grep "enter_pressed 0" >/dev/null 2>&1; then
-                log_message "WiFi connection cancelled by user"
-				return 1
-            fi
-            sleep .5
+            inotifywait "$messages_file"
+            last_line=$(tail -n 1 "$messages_file")
+            case $last_line in 
+                *"$B_START"* | *"$B_START_2"*)
+                    log_message "WiFi connection cancelled by user"
+                    display_kill
+                    return 1
+                    ;;
+                *"Successfully connected to WiFi"*)
+                    log_message "Successfully connected to WiFi"
+                    display_kill
+                    return 0
+                    ;; 
+            esac
         done
-		 
     fi
 }
 
@@ -197,6 +216,20 @@ cores_online() {
         else
             echo 0 >/sys/devices/system/cpu/cpu$i/online
         fi
+    done
+}
+
+# Call this to dim the screen
+# Call it as a background process
+dim_screen() {
+    local start_brightness=40
+    local end_brightness=3
+    local step=1
+    local delay=0.03  # 50ms delay between each step
+
+    for brightness in $(seq $start_brightness -$step $end_brightness); do
+        echo $brightness > /sys/devices/virtual/disp/disp/attr/lcdbl
+        sleep $delay
     done
 }
 
@@ -466,7 +499,7 @@ get_button_press() {
 }
 
 get_event() {
-    "/mnt/SDCARD/.tmp_update/bin/getevent" /dev/input/event3
+    "/mnt/SDCARD/spruce/bin/getevent" /dev/input/event3
 }
 
 get_version() {
@@ -561,12 +594,58 @@ set_smart() {
 set_performance() {
 	echo performance > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
 	log_message "CPU Mode set to PERFORMANCE"
+
 }
 
 set_overclock() {
 	/mnt/SDCARD/spruce/utils/utils "performance" 4 1512 384 1080 1
 	log_message "CPU Mode set to OVERCLOCK"
 }
+
+
+CFG_FILE="/mnt/SDCARD/spruce/settings/spruce.cfg"
+
+setting_get(){
+    [ $# -eq 1 ] || return 1
+    value=$(grep "^$1=" "$CFG_FILE" | cut -d'=' -f2)
+    if [ -z "$value" ]; then
+        return 1
+    else
+       return "$value"
+    fi
+}
+
+
+setting_update(){
+    [ $# -eq 2 ] || return 1
+    key="$1"
+    value="$2"
+
+    case "$value" in
+    "on"|"true"|"1") value=0 ;;
+    "off"|"false"|"0") value=1 ;;
+    esac
+
+    if grep -q "^$key=" "$CFG_FILE"; then
+        sed -i "s/^$key=.*/$key=$value/" "$CFG_FILE"
+    else
+        echo "$key=$value" >> "$CFG_FILE"
+    fi
+}
+
+settings_organize() {
+    # Create a temporary file
+    temp_file=$(mktemp)
+
+    # Sort the file, remove empty lines, and preserve a single newline at the end
+    sort "$CFG_FILE" | sed '/^$/d' | sed '$a\' > "$temp_file"
+
+    # Replace the original file with the sorted and cleaned version
+    mv "$temp_file" "$CFG_FILE"
+
+    log_message "Settings file organized and cleaned up" -v
+}
+
 
 # Call with
 # show_image "Image Path" 5
@@ -600,4 +679,5 @@ vibrate() {
     local duration=${1:-100}
     echo "$duration" >/sys/devices/virtual/timed_output/vibrator/enable
 }
+
 

@@ -6,6 +6,7 @@ SETTINGS_FILE="/config/system.json"
 SWAPFILE="/mnt/SDCARD/cachefile"
 SDCARD_PATH="/mnt/SDCARD"
 SCRIPTS_DIR="${SDCARD_PATH}/spruce/scripts"
+BIN_DIR="${SDCARD_PATH}/spruce/bin"
 
 export SYSTEM_PATH="${SDCARD_PATH}/miyoo"
 export PATH="$SYSTEM_PATH/app:${PATH}"
@@ -14,7 +15,7 @@ export HOME="${SDCARD_PATH}"
 export HELPER_FUNCTIONS="/mnt/SDCARD/spruce/scripts/helperFunctions.sh"
 
 mkdir /var/lib /var/lib/alsa ### Create the directories that by default are not included in the system.
-mount -o bind "/mnt/SDCARD/.tmp_update/lib" /var/lib ### We mount the folder that includes the alsa configuration, just as the system should include it.
+mount -o bind "/mnt/SDCARD/miyoo/var/lib" /var/lib ### Mount the folder containing the alsa configuration, just as the system should include it.
 mount -o bind /mnt/SDCARD/miyoo/app /usr/miyoo/app
 mount -o bind /mnt/SDCARD/miyoo/lib /usr/miyoo/lib
 mount -o bind /mnt/SDCARD/miyoo/res /usr/miyoo/res
@@ -28,6 +29,9 @@ rotate_logs &
 
 SPLASH="/mnt/SDCARD/spruce/imgs/spruce08.bmp"
 display -i "$SPLASH"
+
+# Resetting log file location
+log_file="/mnt/SDCARD/Saves/spruce/spruce.log"
 
 # Flag cleanup
 flag_remove "themeChanged"
@@ -51,6 +55,11 @@ else
     check_and_connect_wifi # wait for wifi only if turned on
 fi
 killall -9 main ### SUPER important in preventing .tmp_update suicide
+kill_images ##### this can probably be removed! - RS
+
+# Bring up network and services
+nice -n 15 ${SCRIPTS_DIR}/wpa_watchdog.sh > /dev/null &
+${SCRIPTS_DIR}/wifi_watchdog.sh > /dev/null &
 
 # Check for first_boot flag and run ThemeUnpacker accordingly
 if flag_check "first_boot"; then
@@ -71,14 +80,17 @@ ${SCRIPTS_DIR}/powerbutton_watchdog.sh &
 # rename ttyS0 to ttyS2 so that PPSSPP cannot read the joystick raw data
 mv /dev/ttyS0 /dev/ttyS2
 # create virtual joypad from keyboard input, it should create /dev/input/event4 system file
-cd /mnt/SDCARD/.tmp_update/bin
+cd ${BIN_DIR}
 ./joypad /dev/input/event3 &
 sleep 0.3 ### wait long enough to create the virtual joypad
 # read joystick raw data from serial input and apply calibration,
-# then send to /dev/input/event4
-( ./joystickinput /dev/ttyS2 /config/joypad.config | ./sendevent /dev/input/event4 ) &
-        
-# run game switcher watchdog
+# then send analog input to /dev/input/event4 when in ANALOG_MODE (this is default)
+# and send keyboard input to /dev/input/event3 when in KEYBOARD_MODE.
+# Please send kill signal USR1 to switch to ANALOG_MODE
+# and send kill signal USR2 to switch to KEYBOARD_MODE
+./joystickinput /dev/ttyS2 /config/joypad.config -axis /dev/input/event4 -key /dev/input/event3 &
+
+# run game switcher watchdog before auto load game is loaded
 ${SCRIPTS_DIR}/gameswitcher_watchdog.sh &
 
 # unhide -FirmwareUpdate- App only if necessary
@@ -86,6 +98,13 @@ VERSION="$(cat /usr/miyoo/version)"
 if [ "$VERSION" -lt 20240713100458 ]; then
     sed -i 's|"#label":|"label":|' "/mnt/SDCARD/App/-FirmwareUpdate-/config.json"
     log_message "Detected firmware version $VERSION; enabling -FirmwareUpdate- app"
+fi
+
+# Hide Update App if no update file is found
+. /mnt/SDCARD/Updater/updaterFunctions.sh
+if ! check_for_update_file; then
+    sed -i 's|"label"|"#label"|' "/mnt/SDCARD/App/-Updater/config.json"
+    log_message "No update file found; hiding Updater app"
 fi
 
 # Load idle monitors before game resume or MainUI
@@ -106,9 +125,9 @@ swapon -p 40 "${SWAPFILE}"
 log_message "Swap file activated"
 
 # Run scripts for initial setup
-#${SCRIPTS_DIR}/forcedisplay.sh
 ${SCRIPTS_DIR}/low_power_warning.sh
 ${SCRIPTS_DIR}/checkfaves.sh &
+${SCRIPTS_DIR}/autoReloadCalibration.sh &
 log_message "Initial setup scripts executed"
 kill_images
 

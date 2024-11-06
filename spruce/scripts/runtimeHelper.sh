@@ -10,17 +10,6 @@ check_and_handle_firmware_app() {
     fi
 }
 
-check_and_hide_update_app() {
-    . /mnt/SDCARD/Updater/updaterFunctions.sh
-    if ! check_for_update_file; then
-        sed -i 's|"label"|"#label"|' "/mnt/SDCARD/App/-Updater/config.json"
-        log_message "No update file found; hiding Updater app"
-    else
-        sed -i 's|"#label"|"label"|' "/mnt/SDCARD/App/-Updater/config.json"
-        log_message "Update file found; Updater app is visible"
-    fi
-}
-
 rotate_logs() {
     local log_dir="/mnt/SDCARD/Saves/spruce"
     local log_target="$log_dir/spruce.log"

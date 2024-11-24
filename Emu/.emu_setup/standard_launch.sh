@@ -95,57 +95,6 @@ flag_add 'emulator_launched'
 ROM_FILE="$(readlink -f "$1")"
 
 case $EMU_NAME in
-	"MEDIA")
-		export HOME=$EMU_DIR
-		export PATH=$EMU_DIR/bin:$PATH
-		export LD_LIBRARY_PATH=$EMU_DIR/libs:/usr/miyoo/lib:/usr/lib:$LD_LIBRARY_PATH
-		cd $EMU_DIR
-		ffplay -vf transpose=2 -fs -i "$ROM_FILE"
-		;;
-
-	"NDS")
-		# the SDL library is hard coded to open ttyS0 for joystick raw input 
-		# so we pause joystickinput and create soft link to serial port
-		killall -STOP joystickinput
-        ln -s /dev/ttyS2 /dev/ttyS0
-
-		cd $EMU_DIR
-		if [ ! -f "/tmp/.show_hotkeys" ]; then
-			touch /tmp/.show_hotkeys
-			LD_LIBRARY_PATH=libs2:/usr/miyoo/lib ./show_hotkeys
-		fi
-		export HOME=$EMU_DIR
-		export LD_LIBRARY_PATH=libs:/usr/miyoo/lib:/usr/lib
-		export SDL_VIDEODRIVER=mmiyoo
-		export SDL_AUDIODRIVER=mmiyoo
-		export EGL_VIDEODRIVER=mmiyoo
-		cd $EMU_DIR
-		if [ -f 'libs/libEGL.so' ]; then
-			rm -rf libs/libEGL.so
-			rm -rf libs/libGLESv1_CM.so
-			rm -rf libs/libGLESv2.so
-		fi
-		./drastic "$ROM_FILE"
-		sync
-
-        # remove soft link and resume joystickinput
-        rm /dev/ttyS0
-		killall -CONT joystickinput
-
-		;;
-
-	"OPENBOR")
-		export LD_LIBRARY_PATH=lib:/usr/miyoo/lib:/usr/lib
-		export HOME=$EMU_DIR
-		cd $HOME
-		if [ "$GAME" == "Final Fight LNS.pak" ]; then
-			./OpenBOR_mod "$ROM_FILE"
-		else
-			./OpenBOR_new "$ROM_FILE"
-		fi
-		sync
-		;;
-	
 	"PICO8")
         # send signal USR2 to joystickinput to switch to KEYBOARD MODE
         # this allows joystick to be used as DPAD in MainUI
@@ -199,37 +148,6 @@ case $EMU_NAME in
 		/bin/sh "$ROM_FILE"
 		;;
 
-	"PSP")
-		if [ "$CORE" = "standalone" ]; then
-
-			# move .config folder into place in case emu setup never ran
-			if [ ! -d "/mnt/SDCARD/.config" ]; then
-				if [ -d "$SETUP_DIR/.config" ]; then
-					cp -rf "$SETUP_DIR/.config" "/mnt/SDCARD/.config" && log_message "emu_setup.sh: copied .config folder to root of SD card."
-				else
-					log_message "emu_setup.sh: WARNING!!! No .config folder found!"
-				fi
-			else
-				log_message "emu_setup.sh: .config folder already in place at SD card root."
-			fi
-
-			cd $EMU_DIR
-			export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$EMU_DIR
-			export HOME=/mnt/SDCARD
-			
-			./PPSSPPSDL "$ROM_FILE"
-		else
-			if setting_get "expertRA"; then
-				export RA_BIN="retroarch"
-			else
-				export RA_BIN="ra32.miyoo"
-			fi
-			RA_DIR="/mnt/SDCARD/RetroArch"
-			cd "$RA_DIR"
-			HOME="$RA_DIR/" "$RA_DIR/$RA_BIN" -v -L "$RA_DIR/.retroarch/cores/${CORE}_libretro.so" "$ROM_FILE"
-		fi
-		;;
-	
 	*)
 		if setting_get "expertRA" || [ "$CORE" = "km_parallel_n64_xtreme_amped_turbo" ]; then
 			export RA_BIN="retroarch"

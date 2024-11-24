@@ -41,19 +41,13 @@ fi
 
 ##### SET CPU MODE #####
 
-case $EMU_NAME in
-	"NDS")
-		if [ "$MODE" = "overclock" ]; then
-			{sleep 33 && set_overclock} &
-		fi
-		;;
-
-	*)
-		if [ "$MODE" = "overclock" ]; then
-			set_overclock
-		fi
-		;;
-esac
+if [ "$MODE" = "overclock" ]; then
+	if [ "$EMU_NAME" = "NDS" ]; then
+		{sleep 33 && set_overclock} &
+	else
+		set_overclock
+	fi
+fi
 
 if [ "$MODE" != "overclock" ] && [ "$MODE" != "performance" ]; then
 	/mnt/SDCARD/spruce/scripts/enforceSmartCPU.sh &
@@ -61,52 +55,54 @@ fi
 
 wifi_needed=false
 syncthing_enabled=false
+wifi_connected=false
 
 ##### RAC Check
-if grep -q 'cheevos_enable = "true"' /mnt/SDCARD/RetroArch/retroarch.cfg; then
+if ! setting_get "disableWifiInGame" && grep -q 'cheevos_enable = "true"' /mnt/SDCARD/RetroArch/retroarch.cfg; then
     log_message "Retro Achievements enabled, WiFi connection needed"
     wifi_needed=true
 fi
 
 ##### Syncthing Sync Check, perform only once per session #####
 if setting_get "syncthing" && ! flag_check "syncthing_startup_synced"; then
-	log_message "Syncthing is enabled, WiFi connection needed"
-	wifi_needed=true
-	syncthing_enabled=true
+    log_message "Syncthing is enabled, WiFi connection needed"
+    wifi_needed=true
+    syncthing_enabled=true
 fi
 
-if setting_get "disableNetworkServicesInGame" || setting_get "disableWifiInGame"; then
-    
-	/mnt/SDCARD/spruce/scripts/networkservices.sh off &
-	
-	if setting_get "disableWifiInGame"; then
-		
-		if ifconfig wlan0 | grep "inet addr:" >/dev/null 2>&1; then
-			ifconfig wlan0 down &
-		fi
-  
-		killall wpa_supplicant
-		killall udhcpc
-	fi
-else
-    if $syncthing_enabled; then
-        if check_and_connect_wifi; then
-            start_syncthing_process
-            /mnt/SDCARD/spruce/bin/Syncthing/syncthing_sync_check.sh --startup
-            flag_add "syncthing_startup_synced"
-        else
-            log_message "Failed to connect to WiFi, skipping Sync check"
-        fi
+# Connect to WiFi if needed for any service
+if $wifi_needed; then
+    if check_and_connect_wifi; then
+        wifi_connected=true
     fi
 fi
 
-if $wifi_needed && ! setting_get "disableWifiInGame"; then
-    check_and_connect_wifi
+# Handle Syncthing sync if enabled
+if $syncthing_enabled && $wifi_connected; then
+    start_syncthing_process
+    /mnt/SDCARD/spruce/bin/Syncthing/syncthing_sync_check.sh --startup
+    flag_add "syncthing_startup_synced"
+fi
+
+# Handle network service disabling
+if setting_get "disableNetworkServicesInGame" || setting_get "disableWifiInGame"; then
+    /mnt/SDCARD/spruce/scripts/networkservices.sh off &
+    
+    if setting_get "disableWifiInGame"; then
+        if ifconfig wlan0 | grep "inet addr:" >/dev/null 2>&1; then
+            ifconfig wlan0 down &
+        fi
+        killall wpa_supplicant
+        killall udhcpc
+    fi
 fi
 
 flag_add 'emulator_launched'
 
 ##### LAUNCH STUFF #####
+
+# we sanitise the rom path
+ROM_FILE="$(readlink -f "$1")"
 
 case $EMU_NAME in
 	"MEDIA")
@@ -114,10 +110,15 @@ case $EMU_NAME in
 		export PATH=$EMU_DIR/bin:$PATH
 		export LD_LIBRARY_PATH=$EMU_DIR/libs:/usr/miyoo/lib:/usr/lib:$LD_LIBRARY_PATH
 		cd $EMU_DIR
-		ffplay -vf transpose=2 -fs -i "$1"
+		ffplay -vf transpose=2 -fs -i "$ROM_FILE"
 		;;
 
 	"NDS")
+		# the SDL library is hard coded to open ttyS0 for joystick raw input 
+		# so we pause joystickinput and create soft link to serial port
+		killall -STOP joystickinput
+        ln -s /dev/ttyS2 /dev/ttyS0
+
 		cd $EMU_DIR
 		if [ ! -f "/tmp/.show_hotkeys" ]; then
 			touch /tmp/.show_hotkeys
@@ -134,8 +135,13 @@ case $EMU_NAME in
 			rm -rf libs/libGLESv1_CM.so
 			rm -rf libs/libGLESv2.so
 		fi
-		./drastic "$1"
+		./drastic "$ROM_FILE"
 		sync
+
+        # remove soft link and resume joystickinput
+        rm /dev/ttyS0
+		killall -CONT joystickinput
+
 		;;
 
 	"OPENBOR")
@@ -143,9 +149,9 @@ case $EMU_NAME in
 		export HOME=$EMU_DIR
 		cd $HOME
 		if [ "$GAME" == "Final Fight LNS.pak" ]; then
-			./OpenBOR_mod "$1"
+			./OpenBOR_mod "$ROM_FILE"
 		else
-			./OpenBOR_new "$1"
+			./OpenBOR_new "$ROM_FILE"
 		fi
 		sync
 		;;
@@ -157,15 +163,38 @@ case $EMU_NAME in
 
 		export HOME="$EMU_DIR"
 		export PATH="$HOME"/bin:$PATH
-		export LD_LIBRARY_PATH="$HOME"/lib:$LD_LIBRARY_PATH
+
+		P8_DIR="/mnt/SDCARD/Emu/PICO8/.lexaloffle/pico-8"
+		CONTROL_PROFILE="$(setting_get "pico8_control_profile")"
+
+		if [ "$CONTROL_PROFILE" = "Steward" ]; then
+			export LD_LIBRARY_PATH="$HOME"/lib-stew:$LD_LIBRARY_PATH
+		else
+			export LD_LIBRARY_PATH="$HOME"/lib-cine:$LD_LIBRARY_PATH
+		fi
+
+		if [ "$CONTROL_PROFILE" = "Doubled" ]; then
+			cp -f "$P8_DIR/sdl_controllers.facebuttons" "$P8_DIR/sdl_controllers.txt"
+		elif [ "$CONTROL_PROFILE" = "One-handed" ]; then
+			cp -f "$P8_DIR/sdl_controllers.onehand" "$P8_DIR/sdl_controllers.txt"
+		elif [ "$CONTROL_PROFILE" = "Racing" ]; then
+			cp -f "$P8_DIR/sdl_controllers.racing" "$P8_DIR/sdl_controllers.txt"
+		fi
+
+		if setting_get "pico8_stretch"; then
+			SCALING="-draw_rect 0,0,480,640"
+		else
+			SCALING=""
+		fi
+
 		export SDL_VIDEODRIVER=mali
 		export SDL_JOYSTICKDRIVER=a30
 		cd "$HOME"
 		sed -i 's|^transform_screen 0$|transform_screen 135|' "$HOME/.lexaloffle/pico-8/config.txt"
 		if [ "${GAME##*.}" = "splore" ]; then
-			pico8_dyn -splore -width 640 -height 480 -root_path "/mnt/SDCARD/Roms/PICO8/"
+			pico8_dyn -splore -width 640 -height 480 -root_path "/mnt/SDCARD/Roms/PICO8/" $SCALING
 		else
-			pico8_dyn -width 640 -height 480 -scancodes -run "$1"
+			pico8_dyn -width 640 -height 480 -scancodes -run "$ROM_FILE" $SCALING
 		fi
 		sync
 
@@ -177,7 +206,7 @@ case $EMU_NAME in
 	"PORTS")
 		PORTS_DIR=/mnt/SDCARD/Roms/PORTS
 		cd $PORTS_DIR
-		/bin/sh "$1"
+		/bin/sh "$ROM_FILE"
 		;;
 
 	"PSP")
@@ -198,7 +227,7 @@ case $EMU_NAME in
 			export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$EMU_DIR
 			export HOME=/mnt/SDCARD
 			
-			./PPSSPPSDL "$*"
+			./PPSSPPSDL "$ROM_FILE"
 		else
 			if setting_get "expertRA"; then
 				export RA_BIN="retroarch"
@@ -207,7 +236,7 @@ case $EMU_NAME in
 			fi
 			RA_DIR="/mnt/SDCARD/RetroArch"
 			cd "$RA_DIR"
-			HOME="$RA_DIR/" "$RA_DIR/$RA_BIN" -v -L "$RA_DIR/.retroarch/cores/${CORE}_libretro.so" "$1"
+			HOME="$RA_DIR/" "$RA_DIR/$RA_BIN" -v -L "$RA_DIR/.retroarch/cores/${CORE}_libretro.so" "$ROM_FILE"
 		fi
 		;;
 	
@@ -220,7 +249,7 @@ case $EMU_NAME in
 		RA_DIR="/mnt/SDCARD/RetroArch"
 		cd "$RA_DIR"
 
-		HOME="$RA_DIR/" "$RA_DIR/$RA_BIN" -v -L "$RA_DIR/.retroarch/cores/${CORE}_libretro.so" "$1"
+		HOME="$RA_DIR/" "$RA_DIR/$RA_BIN" -v -L "$RA_DIR/.retroarch/cores/${CORE}_libretro.so" "$ROM_FILE"
 
 		;;
 		

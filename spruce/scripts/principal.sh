@@ -29,7 +29,7 @@ fi
 while [ 1 ]; do
 
     if [ -f /mnt/SDCARD/spruce/flags/gs.lock ] ; then
-        log_message "***** GAME SWITCHER: flag file detected! Launching! *****"
+        log_message "***** GAME SWITCHER: GS enabled and flag file detected! Launching! *****"
         /mnt/SDCARD/spruce/scripts/gameswitcher.sh
     fi
 
@@ -38,9 +38,7 @@ while [ 1 ]; do
         flag_remove "lastgame"
 
         # check if emu visibility needs a refresh, before entering MainUI
-        log_precise "Checking for emulator visibility refresh"
         /mnt/SDCARD/spruce/scripts/emufresh_md5_multi.sh
-        log_precise "Emulator visibility refresh complete"
 
         # Check for the themeChanged flag
         if flag_check "themeChanged"; then
@@ -55,13 +53,10 @@ while [ 1 ]; do
             flag_remove "low_battery"
         fi
 
-        log_precise "Running percentage show script"
         /mnt/SDCARD/spruce/scripts/powerdisplay.sh &
-        log_precise "Power display complete"
 
-        # This is to kill leftover display and show processes that may be running
+        # This is to kill leftover display processes that may be running
         display_kill &
-        kill_images &
 
         # make soft link to serial port with original device name, so MainUI can use it to calibrate joystick
         ln -s /dev/ttyS2 /dev/ttyS0

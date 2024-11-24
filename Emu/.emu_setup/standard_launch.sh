@@ -41,17 +41,7 @@ fi
 
 ##### SET CPU MODE #####
 
-if [ "$MODE" = "overclock" ]; then
-	if [ "$EMU_NAME" = "NDS" ]; then
-		{sleep 33 && set_overclock} &
-	else
-		set_overclock
-	fi
-fi
-
-if [ "$MODE" != "overclock" ] && [ "$MODE" != "performance" ]; then
-	/mnt/SDCARD/spruce/scripts/enforceSmartCPU.sh &
-fi
+/mnt/SDCARD/spruce/scripts/enforceSmartCPU.sh &
 
 wifi_needed=false
 syncthing_enabled=false

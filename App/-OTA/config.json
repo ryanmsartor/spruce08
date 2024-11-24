@@ -1,6 +1,0 @@
-{
-  "label": "OTA Updater",
-  "icon": "/mnt/SDCARD/Themes/SPRUCE/Icons/App/updater.png",
-  "launch": "launch.sh",
-  "description": "Check for updates over Wi-Fi"
-}

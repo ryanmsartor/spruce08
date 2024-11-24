@@ -6,8 +6,6 @@
 
 . /mnt/SDCARD/spruce/scripts/helperFunctions.sh
 
-flag_add "emufresh"
-
 ROMS_DIR="/mnt/SDCARD/Roms"
 
 for SYSTEM in "$ROMS_DIR"/*; do
@@ -25,5 +23,4 @@ for SYSTEM in "$ROMS_DIR"/*; do
 	fi
 done
 
-flag_remove "emufresh"
 exit 0

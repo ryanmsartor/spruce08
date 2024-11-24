@@ -78,10 +78,7 @@ else
     ${SCRIPTS_DIR}/ThemeUnpacker.sh
 fi
 
-{
-    ${SCRIPTS_DIR}/romdirpostrofix.sh
-    ${SCRIPTS_DIR}/emufresh_md5_multi.sh
-} &
+${SCRIPTS_DIR}/romdirpostrofix.sh &
 
 alsactl nrestore &
 

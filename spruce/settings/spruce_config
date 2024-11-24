@@ -21,7 +21,6 @@ $SSH=/mnt/SDCARD/spruce/scripts/applySetting/SSH.sh$
 
 # Task Scripts
 $CLEAR_WIFI=/mnt/SDCARD/spruce/scripts/tasks/clearwifi.sh$
-$RESET_EMUFRESH=/mnt/SDCARD/spruce/scripts/tasks/resetEmufresh.sh$
 $RESET_RA=/mnt/SDCARD/spruce/scripts/tasks/resetRA.sh$
 
 
@@ -74,8 +73,6 @@ $RESET_RA=/mnt/SDCARD/spruce/scripts/tasks/resetRA.sh$
 "" "Reset RetroArch to spruce defaults" "|" "run|off" "echo -n off" "$RESET_RA$|" "$RESET_RA$ _INDEX_"
 @"We recommend backing up first."
 
-"" "Reset Emufresh" "|" "run|off" "echo -n off" "$RESET_EMUFRESH$|" "$RESET_EMUFRESH$ _INDEX_"
-@"Use this to trigger a full reset of Emufresh. Helpful if your displayed roms or consoles are incorrect."
 
 
 [Network]

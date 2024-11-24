@@ -149,7 +149,7 @@ case $EMU_NAME in
 		;;
 
 	*)
-		if setting_get "expertRA" || [ "$CORE" = "km_parallel_n64_xtreme_amped_turbo" ]; then
+		if setting_get "expertRA"; then
 			export RA_BIN="retroarch"
 		else
 			export RA_BIN="ra32.miyoo"

@@ -145,12 +145,8 @@ fi
 swapon -p 40 "${SWAPFILE}"
 
 # Run scripts for initial setup
-#${SCRIPTS_DIR}/forcedisplay.sh
-${SCRIPTS_DIR}/ffplay_is_now_media.sh &
 ${SCRIPTS_DIR}/checkfaves.sh &
-${SCRIPTS_DIR}/credits_watchdog.sh &
 developer_mode_task &
-update_checker &
 
 # Initialize CPU settings
 scaling_min_freq=1008000 ### default value, may be overridden in specific script

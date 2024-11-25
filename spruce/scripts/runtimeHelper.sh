@@ -13,20 +13,7 @@ check_and_handle_firmware_app() {
     fi
 }
 
-# Function to check and hide the Update App if necessary
-check_and_hide_update_app() {
-    . /mnt/SDCARD/Updater/updaterFunctions.sh
-    if ! check_for_update_file; then
-        sed -i 's|"label"|"#label"|' "/mnt/SDCARD/App/-Updater/config.json"
-        log_message "No update file found; hiding Updater app"
-    else
-        sed -i 's|"#label"|"label"|' "/mnt/SDCARD/App/-Updater/config.json"
-        log_message "Update file found; Updater app is visible"
-    fi
-}
-
 DEV_TASK='"" "Reapply Developer/Designer mode" "|" "run|off" "echo -n off" "/mnt/SDCARD/spruce/scripts/devconf.sh|" ""'
-
 
 developer_mode_task() {
     if flag_check "developer_mode" || flag_check "designer_mode"; then
@@ -111,11 +98,3 @@ set_usb_icon_from_theme(){
         fi
     fi
 }
-
-
-update_checker(){
-    sleep 20
-    check_for_update
-}
-
-

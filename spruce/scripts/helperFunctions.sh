@@ -513,31 +513,6 @@ get_version() {
     fi
 }
 
-get_version_nightly() {
-    local base_version=$(get_version)
-    
-    # Ensure we got a valid base version
-    if [ -z "$base_version" ] || [ "$base_version" = "0" ]; then
-        echo "$base_version"
-        return 1
-    fi
-    
-    local nightly_pattern="/mnt/SDCARD/${base_version}-*"
-    
-    # List all matching files and log them
-    local matching_files=$(ls $nightly_pattern 2>/dev/null)
-    
-    # Find any matching nightly version file
-    local nightly_file=$(ls $nightly_pattern 2>/dev/null | head -n 1)
-    
-    if [ -n "$nightly_file" ]; then
-        local nightly_version=$(basename "$nightly_file")
-        echo "$nightly_version"
-    else
-        echo "$base_version"
-    fi
-}
-
 # Call this to toggle verbose logging
 # After this is called, any log_message calls will output to the log file if -v is passed
 # USE THIS ONLY WHEN DEBUGGING, IT WILL GENERATE A LOT OF LOG FILE ENTRIES
@@ -668,13 +643,6 @@ set_performance() {
     chmod a-w /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
     log_message "CPU Mode now locked to PERFORMANCE" -v
 
-}
-
-set_overclock() {
-    chmod a+w /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
-    /mnt/SDCARD/miyoo/utils/utils "performance" 4 1512 384 1080 1
-    chmod a-w /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
-    log_message "CPU Mode now locked to OVERCLOCK" -v
 }
 
 CFG_FILE="/mnt/SDCARD/spruce/settings/spruce.cfg"

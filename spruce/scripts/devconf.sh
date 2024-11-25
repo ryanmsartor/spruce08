@@ -19,7 +19,4 @@ if flag_check "developer_mode" || flag_check "designer_mode"; then
     # Dropbear first time setup and start
     first_time_setup &
 
-    # App visibility
-    /mnt/SDCARD/spruce/scripts/applySetting/showHideApp.sh show /mnt/SDCARD/App/FileManagement/config.json
-    /mnt/SDCARD/spruce/scripts/applySetting/showHideApp.sh show /mnt/SDCARD/App/ShowOutputTest/config.json
 fi

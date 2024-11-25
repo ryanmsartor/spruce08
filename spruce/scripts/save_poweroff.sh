@@ -106,27 +106,14 @@ if pgrep "ra32.miyoo" >/dev/null; then
     # } | $BIN_PATH/sendevent /dev/input/event3
     # sleep 0.3
     killall -q -15 ra32.miyoo
-elif pgrep "PPSSPPSDL" >/dev/null; then
-    {
-        echo 1 314 1 # SELECT down
-        echo 3 2 255 # L2 down
-        echo 3 2 0   # L2 up
-        echo 1 314 0 # SELECT up
-        echo 0 0 0   # tell sendevent to exit
-    } | $BIN_PATH/sendevent /dev/input/event4
-    sleep 1
-    killall -q -15 PPSSPPSDL
 else
     killall -q -15 retroarch
-    killall -q -15 drastic
     killall -q -9 MainUI
 fi
 
 # wait until emulator or MainUI exit
 while killall -q -0 ra32.miyoo ||
     killall -q -0 retroarch ||
-    killall -q -0 PPSSPPSDL ||
-    killall -q -0 drastic ||
     killall -q -0 MainUI; do
     sleep 0.5
 done

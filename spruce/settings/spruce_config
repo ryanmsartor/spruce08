@@ -123,22 +123,3 @@ $RESET_RA=/mnt/SDCARD/spruce/scripts/tasks/resetRA.sh$
 "-d" "Enable item deletion" "on|off" "on|off" "on" "" ""
 "-s" "Image scrolling speed" "30|20|10" "Slow|Normal|Fast" "Fast" "" ""
 "-ts" "Title scrolling speed" "2|4|8" "Slow|Normal|Fast" "Normal" "" ""
-
-
-[Visible Apps]
-
-"" "Boot Logo App" "|" "on|off" "$SHOW_HIDE$ check /mnt/SDCARD/App/BootLogo/config.json" "$SHOW_HIDE$ show /mnt/SDCARD/App/BootLogo/config.json|$SHOW_HIDE$ hide /mnt/SDCARD/App/BootLogo/config.json" ""
-@"Change the boot logo"
-
-"" "Boxart Scraper" "|" "on|off" "$SHOW_HIDE$ check /mnt/SDCARD/App/BoxartScraper/config.json" "$SHOW_HIDE$ show /mnt/SDCARD/App/BoxartScraper/config.json|$SHOW_HIDE$ hide /mnt/SDCARD/App/BoxartScraper/config.json" ""
-@"Download boxart for your games"
-
-"" "File Management" "|" "on|off" "$SHOW_HIDE$ check /mnt/SDCARD/App/FileManagement/config.json" "$SHOW_HIDE$ show /mnt/SDCARD/App/FileManagement/config.json|$SHOW_HIDE$ hide /mnt/SDCARD/App/FileManagement/config.json" ""
-@"Manage files on your A30"
-
-
-"" "Random Game Launcher" "|" "on|off" "$SHOW_HIDE$ check /mnt/SDCARD/App/RandomGame/config.json" "$SHOW_HIDE$ show /mnt/SDCARD/App/RandomGame/config.json|$SHOW_HIDE$ hide /mnt/SDCARD/App/RandomGame/config.json" ""
-@"Launch a random game"
-
-"" "Real Time Clock" "|" "on|off" "$SHOW_HIDE$ check /mnt/SDCARD/App/RealTimeClock/config.json" "$SHOW_HIDE$ show /mnt/SDCARD/App/RealTimeClock/config.json|$SHOW_HIDE$ hide /mnt/SDCARD/App/RealTimeClock/config.json" ""
-@"Set the current time and date"
